@@ -1,0 +1,15 @@
+Package: modelimpact
+Type: Package
+Title: Fucntions to assess the business impact of churn prediction models
+Version: 1.0.0
+Author: Peer Christensen
+Maintainer: Peer Christensen <hr.pchristensen@gmail.com>
+Description: Calculate the financial impact of churn models in terms of cost, revenue, profit and ROI.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.1.1
+Imports: 
+  dplyr
+Depends: 
+    R (>= 2.10)
