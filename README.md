@@ -6,7 +6,9 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of modelimpact is to …
+This package is intended to help data scientists and decision-makers
+understand the potential value of churn prediction models depending on
+how many customers are being targeted by a campaign.
 
 ## Installation
 
@@ -20,21 +22,34 @@ devtools::install_github("PeerChristensen/modelimpact")
 
 ## Functions and parameters
 
-modelimpact currently includes three functions: <br>
+The first three functions aim to provide information about the business
+impact of using a model and targeting x % of the customer base. These
+functions accept the following arguments (required ones in **bold**):
+<br>
 
--   `cost_revenue()` <br>
--   `profit()` <br>
--   `roi()`
-
-Each function accepts the following parameters (required ones in
-**bold**): <br>
-
--   **`x`** a data frame <br>
+-   **`x`** - a data frame <br>
 -   `fixed_cost` - fixed costs (defaults to 0) <br>
 -   `var_cost` - variable costs (defaults to 0) <br>
 -   `tp_val` - true positive value (defaults to 0) <br>
 -   **`prob_col`** - the variable containing target class probabilities
 -   **`truth_col`** the variable containing the actual class
+
+`profit_thresholds()` accepts the following arguments:
+
+-   **`x`** - a data frame <br>
+-   `var_cost` - variable costs <br>
+-   `prob_accept` - Probability of offer being accapted. Defaults to 1.
+    <br>
+-   `tp_val` - The average value of a True Positive. `var_cost` is
+    automatically subtracted. <br>
+-   `fp_val` - The average cost of a False Positive. `var_cost` is
+    automatically subtracted. <br>
+-   `tn_val` - The average cost of a True Negatives <br>
+-   `fn_val` - The average cost of a False Negatives <br>
+-   **`prob_col`** - The column with probabilities of the event of
+    interest <br>
+-   **`truth_col`** - the column with the actual outcome/class. Possible
+    values are ‘Yes’ and ‘No’
 
 ``` r
 # Parameter settings
@@ -150,7 +165,7 @@ profit_df %>%
   labs(x = "% targeted",y = "Profit")
 ```
 
-<img src="man/figures/README-unnamed-chunk-5-1.png" width="100%" />
+<img src="man/figures/README-profit-plot-1.png" width="100%" />
 
 ## Return on investment
 
@@ -184,4 +199,48 @@ roi_df %>%
   labs(x = "% targeted",y = "ROI")
 ```
 
-<img src="man/figures/README-unnamed-chunk-7-1.png" width="100%" />
+<img src="man/figures/README-roi-plot-1.png" width="100%" />
+
+## Optimal threshold
+
+``` r
+thresholds <- data %>%
+  profit_thresholds(var_cost    = 100,
+                    prob_accept = .7,
+                    tp_val      = 2000,
+                    fp_val      = 0,
+                    tn_val      = 0,
+                    fn_val      = -2000,
+                    prob_col = Yes,
+                    truth_col = Churn)
+
+head(thresholds)
+#> # A tibble: 6 x 2
+#>   threshold payoff
+#>       <dbl>  <dbl>
+#> 1      0      9850
+#> 2      0.01  68400
+#> 3      0.02  67500
+#> 4      0.03  42700
+#> 5      0.04  42960
+#> 6      0.05  20840
+```
+
+``` r
+optimal_threshold <- thresholds %>% filter(payoff == max(payoff))
+optimal_threshold
+#> # A tibble: 1 x 2
+#>   threshold payoff
+#>       <dbl>  <dbl>
+#> 1      0.01  68400
+```
+
+``` r
+thresholds %>%
+  ggplot(aes(x=threshold,y=payoff)) +
+  geom_line(color="darkred",size = 1) +
+  geom_hline(yintercept=0,linetype="dashed") +
+  scale_y_continuous(labels = ks)
+```
+
+<img src="man/figures/README-unnamed-chunk-5-1.png" width="100%" />
