@@ -1,0 +1,154 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%",
+  message = F
+)
+```
+
+# modelimpact
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+The goal of modelimpact is to ...
+
+## Installation
+
+You can install the development version from [GitHub](https://github.com/) with:
+
+``` {r install}
+# install.packages("devtools")
+devtools::install_github("PeerChristensen/modelimpact")
+```
+## Functions and parameters
+
+modelimpact currently includes three functions: <br>
+
+* `cost_revenue()` <br>
+* `profit()` <br>
+* `roi()`
+
+Each function accepts the following parameters (required ones in **bold**): <br>
+
+* **`x`** a data frame <br>
+* `fixed_cost` - fixed costs (defaults to 0) <br>
+* `var_cost` - variable costs (defaults to 0) <br>
+* `tp_val` - true positive value (defaults to 0) <br>
+* **`prob_col`** - the variable containing target class probabilities
+* **`truth_col`**  the variable containing the actual class
+
+```{r}
+# Parameter settings
+fixed_cost <- 1000
+var_cost   <- 100
+tp_val     <- 2000
+```
+
+## Costs and revenue
+
+```{r data}
+library(modelimpact)
+library(tidyverse)
+library(scales)
+
+head(data)
+```
+
+```{r cost_rev}
+cost_rev <- data %>%
+  cost_revenue(
+    fixed_cost = fixed_cost,
+    var_cost   = var_cost,
+    tp_val     = tp_val,
+    prob_col   = Yes,
+    truth_col  = Churn)
+
+head(cost_rev)
+```
+
+```{r cost_rev_plot}
+# functions for formatting plotting axes
+ks <- function (x) { number_format(accuracy = 1,
+                                   scale = 1/1000,
+                                   suffix = "k",
+                                   big.mark = ",")(x) }
+
+pcts <- function (x) { percent_format(scale=1)((x / max(x)) * 100) }
+theme_set(theme_minimal())
+
+cost_rev %>%
+  ggplot() +
+  geom_line(aes(row,cost_sum), colour ="black",linetype="dashed") + 
+  geom_line(aes(row,cum_rev), colour = "darkred",size=1) + 
+  scale_y_continuous(labels = ks) +
+  scale_x_continuous(labels = pcts) +
+  labs(x = "% targeted",y = "Costs & revenue")
+```
+
+## Profit
+
+```{r}
+profit_df <- data %>%
+  profit(
+    fixed_cost = fixed_cost,
+    var_cost   = var_cost,
+    tp_val     = tp_val,
+    prob_col   = Yes,
+    truth_col  = Churn)
+
+head(profit_df)
+```
+
+```{r}
+# max profit
+max_profit <- profit_df %>% filter(profit == max(profit)) %>% select(row,pct,profit)
+
+max_profit
+```
+
+```{r}
+profit_df %>%
+  ggplot(aes(x=row,y=profit)) +
+  geom_line(colour = "darkred",size=1) +
+  scale_y_continuous(labels = ks) +
+  geom_segment(x = max_profit$row, y= 0,xend=max_profit$row,
+             yend = max_profit$profit, colour="black",linetype="dashed") +
+  geom_hline(yintercept = 0,colour="black", linetype="dashed") +
+  scale_x_continuous(labels = pcts) +
+  labs(x = "% targeted",y = "Profit")
+```
+
+## Return on investment
+
+```{r}
+roi_df <- data %>%
+  roi(
+    fixed_cost = fixed_cost,
+    var_cost   = var_cost,
+    tp_val     = tp_val,
+    prob_col   = Yes,
+    truth_col  = Churn)
+
+head(roi_df)
+```
+
+```{r}
+roi_df %>%
+  ggplot(aes(x=row,y=roi)) +
+  geom_hline(yintercept = 0,colour="black", linetype="dashed") +
+  geom_line(colour = "darkred",size=1) +
+  scale_x_continuous(labels = pcts) +
+  labs(x = "% targeted",y = "ROI")
+```
+
+
+ 
