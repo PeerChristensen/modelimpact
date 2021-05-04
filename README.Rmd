@@ -17,8 +17,8 @@ knitr::opts_chunk$set(
 # modelimpact
 
 <!-- badges: start -->
-`r badger::badge_github_actions("PeerChristensen/modelimpact")`
-
+[![R-CMD-check](https://github.com/PeerChristensen/modelimpact/workflows/R-CMD-check/badge.svg)](https://github.com/PeerChristensen/modelimpact/actions)
+[![CRAN status](https://www.r-pkg.org/badges/version/modelimpact)](https://CRAN.R-project.org/package=modelimpact)
 <!-- badges: end -->
 
 This package is intended to help data scientists and decision-makers understand the potential value of churn prediction models depending on how many customers are being targeted by a campaign.
