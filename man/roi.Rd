@@ -23,5 +23,10 @@ roi(x, fixed_cost = 0, var_cost = 0, tp_val = 0, prob_col = NA, truth_col = NA)
 Calculates ROI after sorting observations with ROI defined as (Current Value - Start Value) / Start Value
 }
 \examples{
-
+roi(predictions,
+fixed_cost = 1000,
+var_cost = 100,
+tp_val = 2000,
+prob_col = Yes,
+truth_col = Churn)
 }

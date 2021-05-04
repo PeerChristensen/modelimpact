@@ -39,5 +39,13 @@ profit_thresholds(
 Finds the optimal threshold (from a business perspective) for classifying churners.
 }
 \examples{
-
+profit_thresholds(predictions,
+var_cost = 100,
+prob_accept = .8,
+tp_val = 2000,
+fp_val = 0,
+tn_val = 0,
+fn_val  = -2000,
+prob_col = Yes,
+truth_col = Churn)
 }

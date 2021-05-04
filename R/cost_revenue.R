@@ -10,7 +10,13 @@
 #' @param truth_col The unquoted name of the column with the actual outcome/class. Possible values are 'Yes' and 'No'.
 #' @export
 #' @examples
-#'
+#' cost_revenue(predictions,
+#' fixed_cost = 1000,
+#' var_cost = 100,
+#' tp_val = 2000,
+#' prob_col = Yes,
+#' truth_col = Churn)
+
 cost_revenue <- function(x,
                          fixed_cost = 0,
                          var_cost   = 0,

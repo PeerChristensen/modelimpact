@@ -30,5 +30,10 @@ cost_revenue(
 Calculates cost and revenue after sorting observations.
 }
 \examples{
-
+cost_revenue(predictions,
+fixed_cost = 1000,
+var_cost = 100,
+tp_val = 2000,
+prob_col = Yes,
+truth_col = Churn)
 }

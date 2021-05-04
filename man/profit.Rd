@@ -30,6 +30,11 @@ profit(
 Calculates profit after sorting observations.
 }
 \examples{
-
+profit(predictions,
+fixed_cost = 1000,
+ var_cost = 100,
+ tp_val = 2000,
+ prob_col = Yes,
+ truth_col = Churn)
 
 }
