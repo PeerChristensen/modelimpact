@@ -68,11 +68,11 @@ library(modelimpact)
 library(tidyverse)
 library(scales)
 
-head(data)
+head(predictions)
 ```
 
 ```{r cost_rev}
-cost_rev <- data %>%
+cost_rev <- predictions %>%
   cost_revenue(
     fixed_cost = fixed_cost,
     var_cost   = var_cost,
@@ -105,7 +105,7 @@ cost_rev %>%
 ## Profit
 
 ```{r profit}
-profit_df <- data %>%
+profit_df <- predictions %>%
   profit(
     fixed_cost = fixed_cost,
     var_cost   = var_cost,
@@ -138,7 +138,7 @@ profit_df %>%
 ## Return on investment
 
 ```{r roi}
-roi_df <- data %>%
+roi_df <- predictions %>%
   roi(
     fixed_cost = fixed_cost,
     var_cost   = var_cost,
@@ -161,7 +161,7 @@ roi_df %>%
 ## Optimal threshold
 
 ```{r}
-thresholds <- data %>%
+thresholds <- predictions %>%
   profit_thresholds(var_cost    = 100,
                     prob_accept = .7,
                     tp_val      = 2000,

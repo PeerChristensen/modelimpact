@@ -18,6 +18,15 @@ You can install the development version from
 ``` r
 # install.packages("devtools")
 devtools::install_github("PeerChristensen/modelimpact")
+#> 
+#>      checking for file ‘/private/var/folders/j7/nyngp1s56r95glq3yw7g44bm0000gn/T/RtmpNkKN7f/remotesd94427111cc8/PeerChristensen-modelimpact-753ca15/DESCRIPTION’ ...  ✓  checking for file ‘/private/var/folders/j7/nyngp1s56r95glq3yw7g44bm0000gn/T/RtmpNkKN7f/remotesd94427111cc8/PeerChristensen-modelimpact-753ca15/DESCRIPTION’
+#>   ─  preparing ‘modelimpact’:
+#>    checking DESCRIPTION meta-information ...  ✓  checking DESCRIPTION meta-information
+#>   ─  checking for LF line-endings in source and make files and shell scripts
+#>   ─  checking for empty or unneeded directories
+#>   ─  building ‘modelimpact_1.0.0.tar.gz’
+#>      
+#> 
 ```
 
 ## Functions and parameters
@@ -65,7 +74,7 @@ library(modelimpact)
 library(tidyverse)
 library(scales)
 
-head(data)
+head(predictions)
 #> # A tibble: 6 x 4
 #>   predict    No     Yes Churn
 #>   <chr>   <dbl>   <dbl> <chr>
@@ -78,7 +87,7 @@ head(data)
 ```
 
 ``` r
-cost_rev <- data %>%
+cost_rev <- predictions %>%
   cost_revenue(
     fixed_cost = fixed_cost,
     var_cost   = var_cost,
@@ -122,7 +131,7 @@ cost_rev %>%
 ## Profit
 
 ``` r
-profit_df <- data %>%
+profit_df <- predictions %>%
   profit(
     fixed_cost = fixed_cost,
     var_cost   = var_cost,
@@ -170,7 +179,7 @@ profit_df %>%
 ## Return on investment
 
 ``` r
-roi_df <- data %>%
+roi_df <- predictions %>%
   roi(
     fixed_cost = fixed_cost,
     var_cost   = var_cost,
@@ -204,7 +213,7 @@ roi_df %>%
 ## Optimal threshold
 
 ``` r
-thresholds <- data %>%
+thresholds <- predictions %>%
   profit_thresholds(var_cost    = 100,
                     prob_accept = .7,
                     tp_val      = 2000,
