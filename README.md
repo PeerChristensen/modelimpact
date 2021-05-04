@@ -4,6 +4,10 @@
 # modelimpact
 
 <!-- badges: start -->
+
+[![R build
+status](https://github.com/PeerChristensen/modelimpact/workflows/R-CMD-check/badge.svg)](https://github.com/PeerChristensen/modelimpact/actions)
+
 <!-- badges: end -->
 
 This package is intended to help data scientists and decision-makers
