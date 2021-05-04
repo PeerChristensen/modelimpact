@@ -21,7 +21,7 @@ profit_thresholds(
 
 \item{var_cost}{Variable cost (e.g. of a campaign offer)}
 
-\item{prob_accept}{Probability of offer being accapted. Defaults to 1.}
+\item{prob_accept}{Probability of offer being accepted. Defaults to 1.}
 
 \item{tp_val}{The average value of a True Positive. `var_cost` is automatically subtracted.}
 

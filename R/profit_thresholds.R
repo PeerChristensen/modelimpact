@@ -4,7 +4,7 @@
 #'
 #' @param x A data frame containing predicted probabilities of a target event and the actual outcome/class.
 #' @param var_cost Variable cost (e.g. of a campaign offer)
-#' @param prob_accept Probability of offer being accapted. Defaults to 1.
+#' @param prob_accept Probability of offer being accepted. Defaults to 1.
 #' @param tp_val The average value of a True Positive. `var_cost` is automatically subtracted.
 #' @param fp_val The average cost of a False Positive. `var_cost` is automatically subtracted.
 #' @param tn_val The average value of a True Negative.

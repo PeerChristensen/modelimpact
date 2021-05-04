@@ -45,7 +45,7 @@ The first three functions aim to provide information about the business impact o
 
 -   **`x`** - a data frame <br>
 -   `var_cost` - variable costs <br>
--   `prob_accept` - Probability of offer being accapted. Defaults to 1. <br>
+-   `prob_accept` - Probability of offer being accepted. Defaults to 1. <br>
 -   `tp_val` - The average value of a True Positive. `var_cost` is automatically subtracted. <br>
 -   `fp_val` - The average cost of a False Positive. `var_cost` is automatically subtracted. <br>
 -   `tn_val` - The average cost of a True Negatives <br>

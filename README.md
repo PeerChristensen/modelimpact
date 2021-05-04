@@ -18,15 +18,6 @@ You can install the development version from
 ``` r
 # install.packages("devtools")
 devtools::install_github("PeerChristensen/modelimpact")
-#> 
-#>      checking for file ‘/private/var/folders/j7/nyngp1s56r95glq3yw7g44bm0000gn/T/RtmpNkKN7f/remotesd94427111cc8/PeerChristensen-modelimpact-753ca15/DESCRIPTION’ ...  ✓  checking for file ‘/private/var/folders/j7/nyngp1s56r95glq3yw7g44bm0000gn/T/RtmpNkKN7f/remotesd94427111cc8/PeerChristensen-modelimpact-753ca15/DESCRIPTION’
-#>   ─  preparing ‘modelimpact’:
-#>    checking DESCRIPTION meta-information ...  ✓  checking DESCRIPTION meta-information
-#>   ─  checking for LF line-endings in source and make files and shell scripts
-#>   ─  checking for empty or unneeded directories
-#>   ─  building ‘modelimpact_1.0.0.tar.gz’
-#>      
-#> 
 ```
 
 ## Functions and parameters
@@ -47,7 +38,7 @@ functions accept the following arguments (required ones in **bold**):
 
 -   **`x`** - a data frame <br>
 -   `var_cost` - variable costs <br>
--   `prob_accept` - Probability of offer being accapted. Defaults to 1.
+-   `prob_accept` - Probability of offer being accepted. Defaults to 1.
     <br>
 -   `tp_val` - The average value of a True Positive. `var_cost` is
     automatically subtracted. <br>
