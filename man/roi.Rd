@@ -19,14 +19,23 @@ roi(x, fixed_cost = 0, var_cost = 0, tp_val = 0, prob_col = NA, truth_col = NA)
 
 \item{truth_col}{The unquoted name of the column with the actual outcome/class. Possible values are 'Yes' and 'No'.}
 }
+\value{
+A data frame with the following columns:
+
+row       = row numbers \cr
+pct       = percentiles \cr
+cum_rev   = cumulated revenue \cr
+cost_sum  = cumulated costs \cr
+roi       = return on investment
+}
 \description{
 Calculates ROI after sorting observations with ROI defined as (Current Value - Start Value) / Start Value
 }
 \examples{
 roi(predictions,
-fixed_cost = 1000,
-var_cost = 100,
-tp_val = 2000,
-prob_col = Yes,
-truth_col = Churn)
+   fixed_cost = 1000,
+   var_cost   = 100,
+   tp_val     = 2000,
+   prob_col   = Yes,
+   truth_col  = Churn)
 }

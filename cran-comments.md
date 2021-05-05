@@ -1,3 +1,10 @@
+## Resubmission
+
+In the new version I have
+
+* Added \value tags to all .Rd files with details about the outputs of the functions.
+
+
 ## Test environments
 
 *   macOS 10.16 with R version 4.0.5

@@ -33,19 +33,25 @@ profit_thresholds(
 
 \item{prob_col}{The unquoted name of the column with probabilities of the event of interest.}
 
-\item{truth_col}{The unquoted name of the column with the actual outcome/class. Possible values are 'Yes' and 'No'.}
+\item{truth_col}{The unquoted name of the column with the actual outcome/class. Possible values are 'Yes' and 'No'.
+
+#' @return
+A data frame with the following columns:
+
+threshold = prediction thresholds \cr
+payoff    = calculated profit for each threshold}
 }
 \description{
 Finds the optimal threshold (from a business perspective) for classifying churners.
 }
 \examples{
 profit_thresholds(predictions,
-var_cost = 100,
-prob_accept = .8,
-tp_val = 2000,
-fp_val = 0,
-tn_val = 0,
-fn_val  = -2000,
-prob_col = Yes,
-truth_col = Churn)
+   var_cost    = 100,
+   prob_accept = .8,
+   tp_val      = 2000,
+   fp_val      = 0,
+   tn_val      = 0,
+   fn_val      = -2000,
+   prob_col    = Yes,
+   truth_col   = Churn)
 }

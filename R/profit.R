@@ -8,14 +8,22 @@
 #' @param tp_val The average value of a True Positive
 #' @param prob_col The unquoted name of the column with probabilities of the event of interest.
 #' @param truth_col The unquoted name of the column with the actual outcome/class. Possible values are 'Yes' and 'No'.
+#'
+#' @return
+#' A data frame with the following columns:
+#'
+#' row       = row numbers \cr
+#' pct       = percentiles \cr
+#' profit    = profit for number of rows selected
+#'
 #' @export
 #' @examples
 #' profit(predictions,
-#' fixed_cost = 1000,
-#'  var_cost = 100,
-#'  tp_val = 2000,
-#'  prob_col = Yes,
-#'  truth_col = Churn)
+#'      fixed_cost = 1000,
+#'      var_cost   = 100,
+#'      tp_val     = 2000,
+#'      prob_col   = Yes,
+#'      truth_col  = Churn)
 #'
 
 profit <- function(x,

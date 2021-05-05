@@ -11,17 +11,24 @@
 #' @param fn_val The average cost of a False Negative.
 #' @param prob_col The unquoted name of the column with probabilities of the event of interest.
 #' @param truth_col The unquoted name of the column with the actual outcome/class. Possible values are 'Yes' and 'No'.
+#'
+#' #' @return
+#' A data frame with the following columns:
+#'
+#' threshold = prediction thresholds \cr
+#' payoff    = calculated profit for each threshold
+#'
 #' @export
 #' @examples
 #'profit_thresholds(predictions,
-#'var_cost = 100,
-#'prob_accept = .8,
-#'tp_val = 2000,
-#'fp_val = 0,
-#'tn_val = 0,
-#'fn_val  = -2000,
-#'prob_col = Yes,
-#'truth_col = Churn)
+#'    var_cost    = 100,
+#'    prob_accept = .8,
+#'    tp_val      = 2000,
+#'    fp_val      = 0,
+#'    tn_val      = 0,
+#'    fn_val      = -2000,
+#'    prob_col    = Yes,
+#'    truth_col   = Churn)
 
 profit_thresholds <- function(x,
                               var_cost   = 0,

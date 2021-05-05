@@ -26,14 +26,22 @@ cost_revenue(
 
 \item{truth_col}{The unquoted name of the column with the actual outcome/class. Possible values are 'Yes' and 'No'.}
 }
+\value{
+A data frame with the following columns:
+
+row       = row numbers \cr
+pct       = percentiles \cr
+cost_sum  = cumulated costs \cr
+cum_rev   = cumulated revenue
+}
 \description{
 Calculates cost and revenue after sorting observations.
 }
 \examples{
 cost_revenue(predictions,
-fixed_cost = 1000,
-var_cost = 100,
-tp_val = 2000,
-prob_col = Yes,
-truth_col = Churn)
+   fixed_cost = 1000,
+   var_cost   = 100,
+   tp_val     = 2000,
+   prob_col   = Yes,
+   truth_col  = Churn)
 }
