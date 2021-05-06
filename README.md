@@ -16,7 +16,13 @@ how many customers are being targeted by a campaign.
 
 ## Installation
 
-You can install the development version from
+You can install modelimpact with:
+
+``` r
+install.packages("modelimpact")
+```
+
+Or you can install the development version from
 [GitHub](https://github.com/) with:
 
 ``` r
@@ -247,4 +253,4 @@ thresholds %>%
   scale_y_continuous(labels = ks)
 ```
 
-<img src="man/figures/README-unnamed-chunk-5-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" />

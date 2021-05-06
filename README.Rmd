@@ -25,9 +25,16 @@ This package is intended to help data scientists and decision-makers understand 
 
 ## Installation
 
-You can install the development version from [GitHub](https://github.com/) with:
+You can install modelimpact with:
 
-``` {r install}
+```{r, eval=FALSE}
+install.packages("modelimpact")
+```
+
+
+Or you can install the development version from [GitHub](https://github.com/) with:
+
+``` {r install, eval=F}
 # install.packages("devtools")
 devtools::install_github("PeerChristensen/modelimpact")
 ```
