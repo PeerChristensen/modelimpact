@@ -76,7 +76,7 @@ library(tidyverse)
 library(scales)
 
 head(predictions)
-#> # A tibble: 6 x 4
+#> # A tibble: 6 × 4
 #>   predict    No     Yes Churn
 #>   <chr>   <dbl>   <dbl> <chr>
 #> 1 No      0.996 0.00353 No   
@@ -97,7 +97,7 @@ cost_rev <- predictions %>%
     truth_col  = Churn)
 
 head(cost_rev)
-#> # A tibble: 6 x 4
+#> # A tibble: 6 × 4
 #>     row   pct cost_sum cum_rev
 #>   <int> <int>    <dbl>   <dbl>
 #> 1     1     1     1100    2000
@@ -125,9 +125,14 @@ cost_rev %>%
   scale_y_continuous(labels = ks) +
   scale_x_continuous(labels = pcts) +
   labs(x = "% targeted",y = "Costs & revenue")
+#> Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+#> ℹ Please use `linewidth` instead.
+#> This warning is displayed once every 8 hours.
+#> Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
+#> generated.
 ```
 
-<img src="man/figures/README-cost_rev_plot-1.png" width="100%" />
+<img src="man/figures/README-cost_rev_plot-1.png" alt="" width="100%" />
 
 ## Profit
 
@@ -141,7 +146,7 @@ profit_df <- predictions %>%
     truth_col  = Churn)
 
 head(profit_df)
-#> # A tibble: 6 x 3
+#> # A tibble: 6 × 3
 #>     row   pct profit
 #>   <int> <int>  <dbl>
 #> 1     1     1    900
@@ -157,7 +162,7 @@ head(profit_df)
 max_profit <- profit_df %>% filter(profit == max(profit)) %>% select(row,pct,profit)
 
 max_profit
-#> # A tibble: 1 x 3
+#> # A tibble: 1 × 3
 #>     row   pct profit
 #>   <int> <int>  <dbl>
 #> 1   464    22  70600
@@ -175,7 +180,7 @@ profit_df %>%
   labs(x = "% targeted",y = "Profit")
 ```
 
-<img src="man/figures/README-profit-plot-1.png" width="100%" />
+<img src="man/figures/README-profit-plot-1.png" alt="" width="100%" />
 
 ## Return on investment
 
@@ -189,7 +194,7 @@ roi_df <- predictions %>%
     truth_col  = Churn)
 
 head(roi_df)
-#> # A tibble: 6 x 5
+#> # A tibble: 6 × 5
 #>     row   pct cum_rev cost_sum   roi
 #>   <int> <int>   <dbl>    <dbl> <dbl>
 #> 1     1     1    2000     1100 0.818
@@ -209,9 +214,25 @@ roi_df %>%
   labs(x = "% targeted",y = "ROI")
 ```
 
-<img src="man/figures/README-roi-plot-1.png" width="100%" />
+<img src="man/figures/README-roi-plot-1.png" alt="" width="100%" />
 
 ## Optimal threshold
+
+Unlike the three functions above, `profit_thresholds()` answers a
+different question and should not be read the same way. Rather than
+ranking customers and reporting the impact of targeting the top *X %*,
+it sweeps a **probability cutoff** from 0 to 1, builds a full confusion
+matrix (TP/FP/TN/FN) at each cutoff, and sums a payoff using per-cell
+values (`tp_val`, `fp_val`, `tn_val`, `fn_val`) and `prob_accept`. Two
+consequences to keep in mind:
+
+-   The x-axis is the classification **threshold**, not “% targeted”,
+    and it runs in the opposite direction: a *high* threshold targets
+    *few* customers, a *low* threshold targets many.
+-   The value model differs from `profit()` (it penalises missed
+    churners via `fn_val`, applies `prob_accept`, and uses no
+    `fixed_cost`), so its optimum will generally not coincide with the
+    peak of the `profit()` curve.
 
 ``` r
 thresholds <- predictions %>%
@@ -225,7 +246,7 @@ thresholds <- predictions %>%
                     truth_col = Churn)
 
 head(thresholds)
-#> # A tibble: 6 x 2
+#> # A tibble: 6 × 2
 #>   threshold payoff
 #>       <dbl>  <dbl>
 #> 1      0      9850
@@ -239,7 +260,7 @@ head(thresholds)
 ``` r
 optimal_threshold <- thresholds %>% filter(payoff == max(payoff))
 optimal_threshold
-#> # A tibble: 1 x 2
+#> # A tibble: 1 × 2
 #>   threshold payoff
 #>       <dbl>  <dbl>
 #> 1      0.01  68400
@@ -253,4 +274,4 @@ thresholds %>%
   scale_y_continuous(labels = ks)
 ```
 
-<img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-6-1.png" alt="" width="100%" />

@@ -169,6 +169,11 @@ roi_df %>%
 
 ## Optimal threshold
 
+Unlike the three functions above, `profit_thresholds()` answers a different question and should not be read the same way. Rather than ranking customers and reporting the impact of targeting the top *X %*, it sweeps a **probability cutoff** from 0 to 1, builds a full confusion matrix (TP/FP/TN/FN) at each cutoff, and sums a payoff using per-cell values (`tp_val`, `fp_val`, `tn_val`, `fn_val`) and `prob_accept`. Two consequences to keep in mind:
+
+- The x-axis is the classification **threshold**, not "% targeted", and it runs in the opposite direction: a *high* threshold targets *few* customers, a *low* threshold targets many.
+- The value model differs from `profit()` (it penalises missed churners via `fn_val`, applies `prob_accept`, and uses no `fixed_cost`), so its optimum will generally not coincide with the peak of the `profit()` curve.
+
 ```{r}
 thresholds <- predictions %>%
   profit_thresholds(var_cost    = 100,

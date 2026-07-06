@@ -50,10 +50,10 @@ for ( i in seq(0,1,0.01)) {
   tn <- preds_i %>% dplyr::filter(preds == "No" & {{ truth_col }}  == "No") %>% nrow()
   fn <- preds_i %>% dplyr::filter(preds == "No" & {{ truth_col }}  == "Yes") %>% nrow()
 
-  tp_vals <- {{tp_val}} - ({{var_cost}} * {{prob_accept}})
-  fp_vals <- - ({{var_cost}} * {{prob_accept}})
-  tn_vals <- {{tn_val}}
-  fn_vals <- {{fn_val}}
+  tp_vals <- tp_val - (var_cost * prob_accept)
+  fp_vals <- fp_val - (var_cost * prob_accept)
+  tn_vals <- tn_val
+  fn_vals <- fn_val
 
   payoff <- (tp * tp_vals) + (fp * fp_vals) + (fn * fn_vals) + (tn * tn_vals)
 
