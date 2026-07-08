@@ -4,7 +4,16 @@
 \alias{roi}
 \title{Calculate Return on investment (ROI)}
 \usage{
-roi(x, fixed_cost = 0, var_cost = 0, tp_val = 0, prob_col = NA, truth_col = NA)
+roi(
+  x,
+  fixed_cost = 0,
+  var_cost = 0,
+  tp_val = 0,
+  prob_accept = 1,
+  prob_col = NA,
+  truth_col = NA,
+  positive = "Yes"
+)
 }
 \arguments{
 \item{x}{A data frame containing predicted probabilities of a target event and the actual outcome/class.}
@@ -15,9 +24,13 @@ roi(x, fixed_cost = 0, var_cost = 0, tp_val = 0, prob_col = NA, truth_col = NA)
 
 \item{tp_val}{The average value of a True Positive}
 
+\item{prob_accept}{Probability of the offer being accepted. Variable cost is only incurred when accepted. Defaults to 1.}
+
 \item{prob_col}{The unquoted name of the column with probabilities of the event of interest.}
 
-\item{truth_col}{The unquoted name of the column with the actual outcome/class. Possible values are 'Yes' and 'No'.}
+\item{truth_col}{The unquoted name of the column with the actual outcome/class.}
+
+\item{positive}{The value in `truth_col` that identifies the event of interest. Defaults to 'Yes'.}
 }
 \value{
 A data frame with the following columns:

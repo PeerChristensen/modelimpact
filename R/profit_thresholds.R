@@ -10,9 +10,10 @@
 #' @param tn_val The average value of a True Negative.
 #' @param fn_val The average cost of a False Negative.
 #' @param prob_col The unquoted name of the column with probabilities of the event of interest.
-#' @param truth_col The unquoted name of the column with the actual outcome/class. Possible values are 'Yes' and 'No'.
+#' @param truth_col The unquoted name of the column with the actual outcome/class.
+#' @param positive The value in `truth_col` that identifies the event of interest. Defaults to 'Yes'.
 #'
-#' #' @return
+#' @return
 #' A data frame with the following columns:
 #'
 #' threshold = prediction thresholds \cr
@@ -38,17 +39,18 @@ profit_thresholds <- function(x,
                               tn_val      = 0,
                               fn_val      = 0,
                               prob_col = NA,
-                              truth_col = NA) {
+                              truth_col = NA,
+                              positive = "Yes") {
 
 results <- NULL
 for ( i in seq(0,1,0.01)) {
 
   preds_i <- x %>% dplyr::mutate(preds = dplyr::if_else({{prob_col}} > i,"Yes","No"))
 
-  tp <- preds_i %>% dplyr::filter(preds == "Yes" & {{ truth_col }}  == "Yes") %>% nrow()
-  fp <- preds_i %>% dplyr::filter(preds == "Yes" & {{ truth_col }}  == "No") %>% nrow()
-  tn <- preds_i %>% dplyr::filter(preds == "No" & {{ truth_col }}  == "No") %>% nrow()
-  fn <- preds_i %>% dplyr::filter(preds == "No" & {{ truth_col }}  == "Yes") %>% nrow()
+  tp <- preds_i %>% dplyr::filter(preds == "Yes" & {{ truth_col }}  == positive) %>% nrow()
+  fp <- preds_i %>% dplyr::filter(preds == "Yes" & {{ truth_col }}  != positive) %>% nrow()
+  tn <- preds_i %>% dplyr::filter(preds == "No" & {{ truth_col }}  != positive) %>% nrow()
+  fn <- preds_i %>% dplyr::filter(preds == "No" & {{ truth_col }}  == positive) %>% nrow()
 
   tp_vals <- tp_val - (var_cost * prob_accept)
   fp_vals <- fp_val - (var_cost * prob_accept)
@@ -61,6 +63,7 @@ for ( i in seq(0,1,0.01)) {
 
   results <- rbind(results,result)
 }
+class(results) <- c("mi_thresholds", "tbl_df", "tbl", "data.frame")
 return(results)
 }
 

@@ -5,8 +5,10 @@
 #' @param fixed_cost Fixed cost (e.g. of a campaign)
 #' @param var_cost Variable cost (e.g. discount offered)
 #' @param tp_val The average value of a True Positive
+#' @param prob_accept Probability of the offer being accepted. Variable cost is only incurred when accepted. Defaults to 1.
 #' @param prob_col The unquoted name of the column with probabilities of the event of interest.
-#' @param truth_col The unquoted name of the column with the actual outcome/class. Possible values are 'Yes' and 'No'.
+#' @param truth_col The unquoted name of the column with the actual outcome/class.
+#' @param positive The value in `truth_col` that identifies the event of interest. Defaults to 'Yes'.
 #'
 #' @return
 #' A data frame with the following columns:
@@ -30,21 +32,22 @@ roi <- function(x,
                 fixed_cost = 0,
                 var_cost   = 0,
                 tp_val     = 0,
+                prob_accept = 1,
                 prob_col   = NA,
-                truth_col  = NA ) {
+                truth_col  = NA,
+                positive   = "Yes" ) {
 
   x %>%
     dplyr::arrange(dplyr::desc({{ prob_col }})) %>%
     dplyr::mutate(row = dplyr::row_number()) %>%
     dplyr::mutate(pct = dplyr::ntile(row,100)) %>%
-    dplyr::mutate(cost = var_cost) %>%
+    dplyr::mutate(cost = var_cost * prob_accept) %>%
     dplyr::mutate(cost_sum = cumsum(cost) + fixed_cost) %>%
-    dplyr::mutate(rev = dplyr::if_else({{ truth_col }} == "Yes",tp_val,0)) %>%
+    dplyr::mutate(rev = dplyr::if_else({{ truth_col }} == positive,tp_val,0)) %>%
     dplyr::mutate(cum_rev = cumsum(rev)) %>%
     dplyr::mutate(roi = (cum_rev - cost_sum) /cost_sum ) %>%
-    dplyr::select(row,pct,cum_rev,cost_sum,roi)
+    dplyr::select(row,pct,cum_rev,cost_sum,roi) %>%
+    structure(class = c("mi_roi", "tbl_df", "tbl", "data.frame"))
 
 }
-
-utils::globalVariables(c("fixed_cost", "var_cost","tp_val","prob_col","truth_col","pct","cost","cost_sum","cum_rev","preds"))
 
