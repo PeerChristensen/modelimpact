@@ -1,10 +1,17 @@
 Package: modelimpact
 Type: Package
 Title: Functions to Assess the Business Impact of Churn Prediction Models
-Version: 1.0.0
-Author: Peer Christensen
-Maintainer: Peer Christensen <hr.pchristensen@gmail.com>
-Description: Calculate the financial impact of using a churn model in terms of cost, revenue, profit and return on investment.
+Version: 1.1.0
+Authors@R: 
+    person("Peer", "Christensen", email = "hr.pchristensen@gmail.com",
+           role = c("aut", "cre"))
+Description: Calculate and visualise the financial impact of using a
+    classification model, such as a churn model, to target customers. Provides
+    cost, revenue, profit and return-on-investment curves as a function of the
+    share of customers targeted, cumulative gains and lift, marginal profit per
+    bin, and confusion-matrix based payoff across probability thresholds. Also
+    includes 'ggplot2' 'autoplot()' methods and an interactive 'shiny'
+    application for exploring the results.
 License: MIT + file LICENSE
 URL: https://github.com/PeerChristensen/modelimpact
 BugReports: https://github.com/PeerChristensen/modelimpact/issues

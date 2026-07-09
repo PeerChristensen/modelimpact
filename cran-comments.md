@@ -1,25 +1,23 @@
-## Resubmission
+## Update
 
-In the new version I have
-
-* Added \value tags to all .Rd files with details about the outputs of the functions.
-
+This is a feature update (1.0.0 -> 1.1.0). It adds new analysis functions
+(cumulative gains, lift, marginal profit, break-even, ROC/PR, payoff grid,
+model comparison, bootstrap and sensitivity tools), `ggplot2` `autoplot()`
+methods, and an optional interactive `shiny` app. It also fixes a bug where
+`profit_thresholds()` ignored its `fp_val` argument. All added dependencies
+(`ggplot2`, `scales`, `shiny`) are in Suggests and used conditionally.
 
 ## Test environments
 
-*   macOS 10.16 with R version 4.0.5
+*   local macOS, R 4.5.2
 *   win-builder (devel and release)
-*   Windows Server 2008 R2 SP1, R-devel, 32/64 bit
-*   Ubuntu Linux 20.04.1 LTS, R-release, GCC
-*   Fedora Linux, R-devel, clang, gfortran
+*   GitHub Actions: macOS, Windows and Ubuntu (release, devel, oldrel-1)
 
 ## R CMD check results
 
-There were no ERRORs or WARNINGs
+There were no ERRORs or WARNINGs.
 
 There was 1 NOTE:
 
-*   checking CRAN incoming feasibility ... NOTE 
-    Maintainer: 'Peer Christensen [hr.pchristensen@gmail.com]
-
-    New submission
+*   checking CRAN incoming feasibility ... NOTE
+    Maintainer: 'Peer Christensen <hr.pchristensen@gmail.com>'

@@ -30,22 +30,6 @@ Or you can install the development version from
 devtools::install_github("PeerChristensen/modelimpact")
 ```
 
-## Interactive app
-
-For a point-and-click way to explore the package, launch the bundled
-Shiny app:
-
-``` r
-modelimpact::run_app()
-```
-
-It lets you use the sample `predictions` data or **upload your own CSV**
-(choosing comma or semicolon as the separator), pick the probability and
-outcome columns and the positive class, adjust every cost/value
-parameter with sliders, and watch all the plots update live. The app
-needs `shiny` and `ggplot2` installed
-(`install.packages(c("shiny", "ggplot2"))`).
-
 ## Functions and parameters
 
 The first three functions aim to provide information about the business

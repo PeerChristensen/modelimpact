@@ -18,4 +18,13 @@ Useful links:
 }
 
 }
+\author{
+\strong{Maintainer}: Peer Christensen \email{hr.pchristensen@gmail.com}
+
+Authors:
+\itemize{
+  \item Peer Christensen \email{hr.pchristensen@gmail.com}
+}
+
+}
 \keyword{internal}
