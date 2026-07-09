@@ -8,6 +8,10 @@
 [![R-CMD-check](https://github.com/PeerChristensen/modelimpact/workflows/R-CMD-check/badge.svg)](https://github.com/PeerChristensen/modelimpact/actions)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/modelimpact)](https://CRAN.R-project.org/package=modelimpact)
+[![CRAN
+downloads](https://cranlogs.r-pkg.org/badges/grand-total/modelimpact)](https://CRAN.R-project.org/package=modelimpact)
+[![Lifecycle:
+stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 <!-- badges: end -->
 
 This package is intended to help data scientists and decision-makers
