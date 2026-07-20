@@ -27,6 +27,11 @@
   `qini_curve()` reports the cumulative incremental positives with a Qini
   coefficient and AUUC, and `uplift_profit()` turns the ranking into
   incremental profit. Both have `autoplot()` methods (`plot_qini()`).
+* **`tidy()` and `glance()` methods** (via the `generics` package) let result
+  objects flow into tidyverse / tidymodels pipelines. `tidy()` returns the
+  result as a plain tibble; `glance()` gives a one-row headline summary for
+  `profit()`, `profit_thresholds()`, `budget_frontier()`, `value_gains()` and
+  `qini_curve()`.
 
 ## Documentation
 

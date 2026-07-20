@@ -309,6 +309,30 @@ test_that("uplift_profit equals valued incremental positives minus cost", {
   expect_equal(up$profit, expected)
 })
 
+test_that("tidy() returns a plain tibble and preserves the data", {
+  p <- profit(predictions, 1000, 100, 2000, prob_col = Yes, truth_col = Churn)
+  tp <- tidy(p)
+  expect_false(inherits(tp, "mi_profit"))
+  expect_s3_class(tp, "tbl_df")
+  expect_equal(tp$profit, p$profit)
+})
+
+test_that("glance() returns one-row headline summaries", {
+  p <- profit(predictions, 1000, 100, 2000, prob_col = Yes, truth_col = Churn)
+  gp <- glance(p)
+  expect_equal(nrow(gp), 1L)
+  expect_equal(gp$max_profit, 70600)
+
+  th <- profit_thresholds(predictions, var_cost = 100, tp_val = 2000,
+                          fn_val = -2000, prob_col = Yes, truth_col = Churn)
+  expect_equal(glance(th)$best_payoff, max(th$payoff))
+
+  df <- data.frame(pred = c(9, 7, 5, 3, 1), value = c(100, 80, 20, 40, 5))
+  vg <- value_gains(df, pred_col = pred, value_col = value)
+  expect_equal(glance(vg)$gini, attr(vg, "gini"))
+})
+
+
 
 
 
