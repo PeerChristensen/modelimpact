@@ -332,6 +332,22 @@ test_that("glance() returns one-row headline summaries", {
   expect_equal(glance(vg)$gini, attr(vg, "gini"))
 })
 
+test_that("the quarto report template ships with the package", {
+  template <- system.file("quarto", "impact-report.qmd", package = "modelimpact")
+  expect_true(nzchar(template))
+  expect_true(file.exists(template))
+})
+
+test_that("impact_report requires the quarto package", {
+  skip_if(requireNamespace("quarto", quietly = TRUE),
+          "quarto installed; skipping the missing-dependency check")
+  expect_error(
+    impact_report(predictions, prob_col = Yes, truth_col = Churn),
+    "quarto"
+  )
+})
+
+
 
 
 

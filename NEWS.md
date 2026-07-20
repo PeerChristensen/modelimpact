@@ -32,6 +32,8 @@
   result as a plain tibble; `glance()` gives a one-row headline summary for
   `profit()`, `profit_thresholds()`, `budget_frontier()`, `value_gains()` and
   `qini_curve()`.
+* New `impact_report()` renders a ready-made, parameterised `quarto` report
+  bundling the headline summary and every curve into a single HTML document.
 
 ## Documentation
 

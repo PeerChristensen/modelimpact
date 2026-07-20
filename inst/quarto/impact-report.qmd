@@ -1,0 +1,114 @@
+---
+title: "Model impact report"
+format:
+  html:
+    toc: true
+    embed-resources: true
+params:
+  data_path: ""
+  prob_col: ""
+  truth_col: ""
+  positive: "Yes"
+  fixed_cost: 0
+  var_cost: 0
+  tp_val: 0
+  prob_accept: 1
+  budget: !expr NA
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE,
+                      fig.width = 7, fig.height = 4.5, out.width = "100%")
+library(modelimpact)
+library(ggplot2)
+theme_set(theme_minimal())
+
+d <- readRDS(params$data_path)
+
+# expose the chosen columns under fixed internal names so the analysis code can
+# refer to them directly
+d$mi_prob  <- d[[params$prob_col]]
+d$mi_truth <- d[[params$truth_col]]
+
+pos <- params$positive
+fc  <- params$fixed_cost
+vc  <- params$var_cost
+tv  <- params$tp_val
+pa  <- params$prob_accept
+
+has_budget <- !is.na(params$budget)
+```
+
+This report summarises the business impact of a classification model applied to
+`r nrow(d)` cases, using a fixed cost of `r fc`, a variable cost of `r vc` per
+targeted case and a true-positive value of `r tv`.
+
+## Headline summary
+
+```{r}
+knitr::kable(
+  impact_summary(d, fixed_cost = fc, var_cost = vc, tp_val = tv,
+                 prob_accept = pa, prob_col = mi_prob, truth_col = mi_truth,
+                 positive = pos)
+)
+```
+
+## Costs and revenue
+
+```{r}
+autoplot(cost_revenue(d, fixed_cost = fc, var_cost = vc, tp_val = tv,
+                      prob_accept = pa, prob_col = mi_prob, truth_col = mi_truth,
+                      positive = pos))
+```
+
+## Profit
+
+```{r}
+autoplot(profit(d, fixed_cost = fc, var_cost = vc, tp_val = tv,
+                prob_accept = pa, prob_col = mi_prob, truth_col = mi_truth,
+                positive = pos))
+```
+
+## Return on investment
+
+```{r}
+autoplot(roi(d, fixed_cost = fc, var_cost = vc, tp_val = tv,
+             prob_accept = pa, prob_col = mi_prob, truth_col = mi_truth,
+             positive = pos))
+```
+
+## Cumulative gains
+
+```{r}
+autoplot(cumulative_gains(d, prob_col = mi_prob, truth_col = mi_truth, positive = pos))
+```
+
+## Lift
+
+```{r}
+autoplot(lift_curve(d, prob_col = mi_prob, truth_col = mi_truth, positive = pos))
+```
+
+## Marginal profit per bin
+
+```{r}
+autoplot(marginal_profit(d, fixed_cost = fc, var_cost = vc, tp_val = tv,
+                         prob_accept = pa, prob_col = mi_prob, truth_col = mi_truth,
+                         positive = pos))
+```
+
+```{r, results='asis', eval=has_budget}
+cat("## Budget\n")
+```
+
+```{r, eval=has_budget}
+knitr::kable(
+  budget_profit(d, budget = params$budget, fixed_cost = fc, var_cost = vc,
+                tp_val = tv, prob_accept = pa, prob_col = mi_prob,
+                truth_col = mi_truth, positive = pos)
+)
+
+autoplot(budget_frontier(d, fixed_cost = fc, var_cost = vc, tp_val = tv,
+                         prob_accept = pa, prob_col = mi_prob, truth_col = mi_truth,
+                         positive = pos))
+```
