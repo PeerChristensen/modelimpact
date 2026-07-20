@@ -1,4 +1,22 @@
 
+# modelimpact 1.2.0
+
+## New features
+
+* Cost and value arguments now accept **per-observation values**, not just a
+  single number. `tp_val` and `var_cost` in `cost_revenue()`, `profit()`,
+  `roi()`, `marginal_profit()`, `break_even()` and `impact_summary()`, and the
+  per-cell value arguments (`tp_val`, `fp_val`, `tn_val`, `fn_val`) in
+  `profit_thresholds()`, may be given as an unquoted column name (or a vector)
+  so that each case can carry its own value or cost. A single scalar continues
+  to work exactly as before.
+
+## Documentation
+
+* The package is now framed around classification impact in general, with
+  customer churn as one example. A new "Beyond churn" vignette works through a
+  fraud-detection use case.
+
 # modelimpact 1.1.0
 
 ## New features

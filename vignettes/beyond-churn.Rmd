@@ -1,0 +1,168 @@
+---
+title: "Beyond churn: applying modelimpact to other use cases"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Beyond churn: applying modelimpact to other use cases}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 7,
+  fig.height = 4.5,
+  out.width = "100%"
+)
+has_ggplot2 <- requireNamespace("ggplot2", quietly = TRUE)
+```
+
+## The same engine, many problems
+
+`modelimpact` was first written to reason about the business value of a
+customer **churn** model, but nothing in the maths is churn-specific. Every
+function does the same thing: it takes a column of predicted probabilities for
+an event of interest and a column with the actual outcome, then translates the
+model's behaviour into money using a handful of cost and value assumptions.
+
+That makes the package directly usable for any **binary classification**
+problem where acting on a prediction has a cost and being right (or wrong) has a
+value, for example:
+
+- **Fraud detection** — value of blocking a fraudulent transaction vs. the cost
+  of reviewing a flagged one and the loss from fraud that slips through.
+- **Credit default** — expected loss avoided vs. the cost of intervention.
+- **Lead scoring and marketing response** — value of a converted lead vs. the
+  cost of contacting it.
+- **Upsell and cross-sell** — margin on an accepted offer vs. the cost of
+  making it (use `prob_accept` to model take-up).
+- **Predictive maintenance** — cost of an averted failure vs. the cost of an
+  inspection.
+
+The key is the `positive` argument, which every function accepts: it names the
+value in your outcome column that identifies the event of interest. It defaults
+to `"Yes"`, but it can be anything (`"fraud"`, `"default"`, `"converted"`, ...).
+
+## A worked example: fraud detection
+
+Suppose we have scored a batch of transactions with a fraud model. Each row is
+a transaction with the model's predicted probability of fraud (`score`) and
+whether it later turned out to be fraudulent (`fraud`). Fraud is rare, so the
+classes are highly imbalanced.
+
+```{r data}
+library(modelimpact)
+library(magrittr)  # for the %>% pipe
+
+set.seed(42)
+n <- 5000
+
+# ~3% of transactions are actually fraudulent
+is_fraud <- rbinom(n, size = 1, prob = 0.03)
+
+# the model scores fraud higher than legitimate transactions, with overlap
+score <- plogis(rnorm(n, mean = ifelse(is_fraud == 1, 1.5, -2.5), sd = 1.2))
+
+transactions <- data.frame(
+  score = score,
+  fraud = ifelse(is_fraud == 1, "fraud", "legit")
+)
+
+head(transactions)
+```
+
+### The economics
+
+We express the decision in monetary terms:
+
+```{r econ}
+review_cost  <- 8      # cost to manually review a flagged transaction
+fraud_value  <- 400    # average value recovered when fraud is caught
+missed_fraud <- -400   # average loss when fraud is not caught
+```
+
+### Cost and revenue as we review more transactions
+
+Ranking transactions from most to least suspicious, how do the cumulative cost
+of reviewing and the cumulative value recovered grow?
+
+```{r cost-revenue, eval = has_ggplot2}
+library(ggplot2)
+
+transactions %>%
+  cost_revenue(
+    var_cost  = review_cost,
+    tp_val    = fraud_value,
+    prob_col  = score,
+    truth_col = fraud,
+    positive  = "fraud"
+  ) %>%
+  autoplot()
+```
+
+### How far down the ranked list should we review?
+
+`profit()` shows the net value of reviewing the top *X %* of most suspicious
+transactions, and `break_even()` / `impact_summary()` read off the key
+operating points.
+
+```{r profit, eval = has_ggplot2}
+transactions %>%
+  profit(
+    var_cost  = review_cost,
+    tp_val    = fraud_value,
+    prob_col  = score,
+    truth_col = fraud,
+    positive  = "fraud"
+  ) %>%
+  autoplot()
+```
+
+```{r summary}
+impact_summary(
+  transactions,
+  var_cost  = review_cost,
+  tp_val    = fraud_value,
+  prob_col  = score,
+  truth_col = fraud,
+  positive  = "fraud"
+)
+```
+
+### Choosing a decision threshold
+
+If the fraud model must instead produce an automatic block/allow decision,
+`profit_thresholds()` sweeps every probability cutoff and scores the full
+confusion matrix using a value for each cell. Here a missed fraud
+(`fn_val`) is expensive, a false alarm (`fp_val`) merely costs a review, and
+correct decisions on legitimate traffic are neutral.
+
+```{r thresholds, eval = has_ggplot2}
+transactions %>%
+  profit_thresholds(
+    var_cost  = review_cost,
+    tp_val    = fraud_value,
+    fp_val    = 0,
+    tn_val    = 0,
+    fn_val    = missed_fraud,
+    prob_col  = score,
+    truth_col = fraud,
+    positive  = "fraud"
+  ) %>%
+  autoplot()
+```
+
+## Adapting to your own use case
+
+To reuse any of these functions for a different problem, you only need to:
+
+1. Point `prob_col` at your model's predicted-probability column and
+   `truth_col` at the actual-outcome column.
+2. Set `positive` to the label of the event you care about.
+3. Translate your domain into the cost and value arguments (`var_cost`,
+   `fixed_cost`, `tp_val`, and — for `profit_thresholds()` — `fp_val`,
+   `tn_val`, `fn_val`), optionally using `prob_accept` when an action only
+   incurs its cost if accepted.
+
+The interpretation of every plot and summary then carries over unchanged.

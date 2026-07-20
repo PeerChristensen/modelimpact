@@ -3,12 +3,18 @@
 #' Finds the optimal threshold (from a business perspective) for classifying churners.
 #'
 #' @param x A data frame containing predicted probabilities of a target event and the actual outcome/class.
-#' @param var_cost Variable cost (e.g. of a campaign offer)
+#' @param var_cost Variable cost (e.g. of a campaign offer). Either a single
+#'   value applied to every case, or an unquoted column name (or vector) giving
+#'   a per-observation cost.
 #' @param prob_accept Probability of offer being accepted. Defaults to 1.
-#' @param tp_val The average value of a True Positive. `var_cost` is automatically subtracted.
-#' @param fp_val The average cost of a False Positive. `var_cost` is automatically subtracted.
-#' @param tn_val The average value of a True Negative.
-#' @param fn_val The average cost of a False Negative.
+#' @param tp_val The value of a True Positive. `var_cost` is automatically
+#'   subtracted. Either a single value or an unquoted column name (or vector).
+#' @param fp_val The cost of a False Positive. `var_cost` is automatically
+#'   subtracted. Either a single value or an unquoted column name (or vector).
+#' @param tn_val The value of a True Negative. Either a single value or an
+#'   unquoted column name (or vector).
+#' @param fn_val The cost of a False Negative. Either a single value or an
+#'   unquoted column name (or vector).
 #' @param prob_col The unquoted name of the column with probabilities of the event of interest.
 #' @param truth_col The unquoted name of the column with the actual outcome/class.
 #' @param positive The value in `truth_col` that identifies the event of interest. Defaults to 'Yes'.
@@ -43,21 +49,32 @@ profit_thresholds <- function(x,
                               positive = "Yes") {
 
 results <- NULL
+
+xv <- x %>%
+  dplyr::mutate(
+    .prob   = {{ prob_col }},
+    .is_pos = {{ truth_col }} == positive,
+    .tpv    = ({{ tp_val }}) - ({{ var_cost }}) * prob_accept,
+    .fpv    = ({{ fp_val }}) - ({{ var_cost }}) * prob_accept,
+    .tnv    = ({{ tn_val }}) + 0,
+    .fnv    = ({{ fn_val }}) + 0
+  )
+
+prob    <- xv$.prob
+is_pos  <- xv$.is_pos
+tpv     <- xv$.tpv
+fpv     <- xv$.fpv
+tnv     <- xv$.tnv
+fnv     <- xv$.fnv
+
 for ( i in seq(0,1,0.01)) {
 
-  preds_i <- x %>% dplyr::mutate(preds = dplyr::if_else({{prob_col}} > i,"Yes","No"))
+  pred_pos <- prob > i
 
-  tp <- preds_i %>% dplyr::filter(preds == "Yes" & {{ truth_col }}  == positive) %>% nrow()
-  fp <- preds_i %>% dplyr::filter(preds == "Yes" & {{ truth_col }}  != positive) %>% nrow()
-  tn <- preds_i %>% dplyr::filter(preds == "No" & {{ truth_col }}  != positive) %>% nrow()
-  fn <- preds_i %>% dplyr::filter(preds == "No" & {{ truth_col }}  == positive) %>% nrow()
-
-  tp_vals <- tp_val - (var_cost * prob_accept)
-  fp_vals <- fp_val - (var_cost * prob_accept)
-  tn_vals <- tn_val
-  fn_vals <- fn_val
-
-  payoff <- (tp * tp_vals) + (fp * fp_vals) + (fn * fn_vals) + (tn * tn_vals)
+  payoff <- sum(tpv[pred_pos & is_pos]) +
+            sum(fpv[pred_pos & !is_pos]) +
+            sum(fnv[!pred_pos & is_pos]) +
+            sum(tnv[!pred_pos & !is_pos])
 
   result <- dplyr::tibble(threshold = i, payoff)
 

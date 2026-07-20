@@ -4,11 +4,15 @@
 \name{modelimpact-package}
 \alias{modelimpact}
 \alias{modelimpact-package}
-\title{modelimpact: assess the business impact of churn prediction models}
+\title{modelimpact: assess the business impact of classification models}
 \description{
-Calculate the financial impact of using a churn model in terms of cost,
-revenue, profit, ROI, gains, lift and threshold-based payoff, and visualise
-the results.
+Calculate the financial impact of using a classification model to
+prioritise or target cases in terms of cost, revenue, profit, ROI, gains,
+lift and threshold-based payoff, and visualise the results. Although the
+bundled examples use customer churn, the same tools apply to many other
+binary classification problems, such as fraud detection, credit default,
+lead scoring and marketing response, upsell and cross-sell, and predictive
+maintenance.
 }
 \seealso{
 Useful links:

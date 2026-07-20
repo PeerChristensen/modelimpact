@@ -89,3 +89,60 @@ test_that("plot helpers return ggplot objects when ggplot2 is available", {
   g <- cumulative_gains(predictions, prob_col = Yes, truth_col = Churn)
   expect_s3_class(plot_gains(g), "ggplot")
 })
+
+test_that("per-observation values equal the scalar case when constant", {
+  d <- predictions
+  d$vc <- 100
+  d$tv <- 2000
+
+  # profit
+  p_scalar <- profit(predictions, 1000, 100, 2000, prob_col = Yes, truth_col = Churn)
+  p_col    <- profit(d, 1000, var_cost = vc, tp_val = tv, prob_col = Yes, truth_col = Churn)
+  expect_equal(p_scalar$profit, p_col$profit)
+
+  # cost_revenue
+  cr_scalar <- cost_revenue(predictions, 1000, 100, 2000, prob_col = Yes, truth_col = Churn)
+  cr_col    <- cost_revenue(d, 1000, var_cost = vc, tp_val = tv, prob_col = Yes, truth_col = Churn)
+  expect_equal(cr_scalar$cum_rev, cr_col$cum_rev)
+  expect_equal(cr_scalar$cost_sum, cr_col$cost_sum)
+
+  # roi
+  ro_scalar <- roi(predictions, 1000, 100, 2000, prob_col = Yes, truth_col = Churn)
+  ro_col    <- roi(d, 1000, var_cost = vc, tp_val = tv, prob_col = Yes, truth_col = Churn)
+  expect_equal(ro_scalar$roi, ro_col$roi)
+
+  # marginal_profit
+  m_scalar <- marginal_profit(predictions, 1000, 100, 2000, bins = 10, prob_col = Yes, truth_col = Churn)
+  m_col    <- marginal_profit(d, 1000, var_cost = vc, tp_val = tv, bins = 10, prob_col = Yes, truth_col = Churn)
+  expect_equal(m_scalar$marginal_profit, m_col$marginal_profit)
+
+  # profit_thresholds
+  th_scalar <- profit_thresholds(predictions, var_cost = 100, prob_accept = .7, tp_val = 2000,
+                                 fp_val = 0, tn_val = 0, fn_val = -2000, prob_col = Yes, truth_col = Churn)
+  th_col    <- profit_thresholds(d, var_cost = vc, prob_accept = .7, tp_val = tv,
+                                 fp_val = 0, tn_val = 0, fn_val = -2000, prob_col = Yes, truth_col = Churn)
+  expect_equal(th_scalar$payoff, th_col$payoff)
+
+  # break_even / impact_summary wrappers forward per-observation values
+  be_scalar <- break_even(predictions, 1000, 100, 2000, prob_col = Yes, truth_col = Churn)
+  be_col    <- break_even(d, 1000, var_cost = vc, tp_val = tv, prob_col = Yes, truth_col = Churn)
+  expect_equal(be_scalar$max_profit, be_col$max_profit)
+
+  is_scalar <- impact_summary(predictions, 1000, 100, 2000, prob_col = Yes, truth_col = Churn)
+  is_col    <- impact_summary(d, 1000, var_cost = vc, tp_val = tv, prob_col = Yes, truth_col = Churn)
+  expect_equal(is_scalar$max_profit, is_col$max_profit)
+})
+
+test_that("per-observation values change results when they vary", {
+  d <- predictions
+  # give each case a different true-positive value
+  set.seed(1)
+  d$tv <- runif(nrow(d), 1000, 3000)
+
+  p_flat <- profit(d, 1000, 100, mean(d$tv), prob_col = Yes, truth_col = Churn)
+  p_var  <- profit(d, 1000, 100, tp_val = tv, prob_col = Yes, truth_col = Churn)
+
+  # same total revenue basis but a different curve shape
+  expect_false(isTRUE(all.equal(p_flat$profit, p_var$profit)))
+})
+

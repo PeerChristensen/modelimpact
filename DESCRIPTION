@@ -1,17 +1,20 @@
 Package: modelimpact
 Type: Package
-Title: Functions to Assess the Business Impact of Churn Prediction Models
-Version: 1.1.0
+Title: Assess the Business Impact of Classification Models
+Version: 1.2.0
 Authors@R: 
     person("Peer", "Christensen", email = "hr.pchristensen@gmail.com",
            role = c("aut", "cre"))
 Description: Calculate and visualise the financial impact of using a
-    classification model, such as a churn model, to target customers. Provides
-    cost, revenue, profit and return-on-investment curves as a function of the
-    share of customers targeted, cumulative gains and lift, marginal profit per
-    bin, and confusion-matrix based payoff across probability thresholds. Also
-    includes 'ggplot2' 'autoplot()' methods and an interactive 'shiny'
-    application for exploring the results.
+    classification model to prioritise or target cases. Although originally
+    designed for customer churn, the same tools apply to many binary
+    classification problems, including fraud detection, credit default, lead
+    scoring and marketing response, upsell and cross-sell, and predictive
+    maintenance. Provides cost, revenue, profit and return-on-investment
+    curves as a function of the share of cases targeted, cumulative gains and
+    lift, marginal profit per bin, and confusion-matrix based payoff across
+    probability thresholds. Also includes 'ggplot2' 'autoplot()' methods and
+    an interactive 'shiny' application for exploring the results.
 License: MIT + file LICENSE
 URL: https://github.com/PeerChristensen/modelimpact
 BugReports: https://github.com/PeerChristensen/modelimpact/issues
@@ -23,9 +26,12 @@ Imports:
     utils
 Suggests: 
     ggplot2,
+    knitr,
+    rmarkdown,
     scales,
     shiny,
     testthat (>= 3.0.0)
 Depends: 
     R (>= 2.10)
 Config/roxygen2/version: 8.0.0
+VignetteBuilder: knitr

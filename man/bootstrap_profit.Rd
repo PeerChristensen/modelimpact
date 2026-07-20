@@ -21,9 +21,12 @@ bootstrap_profit(
 
 \item{fixed_cost}{Fixed cost (e.g. of a campaign).}
 
-\item{var_cost}{Variable cost (e.g. discount offered) per targeted customer.}
+\item{var_cost}{Variable cost (e.g. discount offered) per targeted customer.
+Either a single value or an unquoted column name (or vector) giving a
+per-observation cost.}
 
-\item{tp_val}{The average value of a True Positive.}
+\item{tp_val}{The value of a True Positive. Either a single value or an
+unquoted column name (or vector) giving a per-observation value.}
 
 \item{prob_col}{The unquoted name of the column with probabilities of the event of interest.}
 

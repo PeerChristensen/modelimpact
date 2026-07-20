@@ -10,7 +10,11 @@
 #' @param x A data frame containing predicted probabilities of a target event and the actual outcome/class.
 #' @param fixed_cost Fixed cost (e.g. of a campaign). Charged once, to the first bin.
 #' @param var_cost Variable cost (e.g. discount offered) per targeted customer.
-#' @param tp_val The average value of a True Positive.
+#'   Either a single value applied to every case, or an unquoted column name (or
+#'   vector) giving a per-observation cost.
+#' @param tp_val The value of a True Positive. Either a single value applied to
+#'   every case, or an unquoted column name (or vector) giving a
+#'   per-observation value.
 #' @param prob_accept Probability of the offer being accepted. Variable cost is only incurred when accepted. Defaults to 1.
 #' @param bins Number of equally sized bins. Defaults to 10 (deciles).
 #' @param prob_col The unquoted name of the column with probabilities of the event of interest.
@@ -53,12 +57,15 @@ marginal_profit <- function(x,
     dplyr::mutate(row = dplyr::row_number()) %>%
     dplyr::mutate(bin = dplyr::ntile(row, bins)) %>%
     dplyr::mutate(event = dplyr::if_else({{ truth_col }} == positive, 1, 0)) %>%
+    dplyr::mutate(.row_cost = ({{ var_cost }}) * prob_accept) %>%
+    dplyr::mutate(.row_rev = dplyr::if_else({{ truth_col }} == positive, ({{ tp_val }}) + 0, 0)) %>%
     dplyr::group_by(bin) %>%
     dplyr::summarise(n       = dplyr::n(),
                      events  = sum(event),
+                     cost    = sum(.row_cost),
+                     revenue = sum(.row_rev),
                      .groups = "drop") %>%
-    dplyr::mutate(cost = (n * var_cost * prob_accept) + dplyr::if_else(bin == 1, fixed_cost, 0)) %>%
-    dplyr::mutate(revenue = events * tp_val) %>%
+    dplyr::mutate(cost = cost + dplyr::if_else(bin == 1, fixed_cost, 0)) %>%
     dplyr::mutate(marginal_profit = revenue - cost) %>%
     dplyr::mutate(cum_profit = cumsum(marginal_profit)) %>%
     dplyr::select(bin, n, events, cost, revenue, marginal_profit, cum_profit) %>%

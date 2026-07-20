@@ -8,7 +8,10 @@
 #' @param x A data frame containing predicted probabilities of a target event and the actual outcome/class.
 #' @param fixed_cost Fixed cost (e.g. of a campaign).
 #' @param var_cost Variable cost (e.g. discount offered) per targeted customer.
-#' @param tp_val The average value of a True Positive.
+#'   Either a single value or an unquoted column name (or vector) giving a
+#'   per-observation cost.
+#' @param tp_val The value of a True Positive. Either a single value or an
+#'   unquoted column name (or vector) giving a per-observation value.
 #' @param prob_col The unquoted name of the column with probabilities of the event of interest.
 #' @param truth_col The unquoted name of the column with the actual outcome/class.
 #' @param positive The value in `truth_col` that identifies the event of interest. Defaults to 'Yes'.
@@ -50,8 +53,8 @@ bootstrap_profit <- function(x,
     xb <- x[sample(n, replace = TRUE), , drop = FALSE]
     profit(xb,
            fixed_cost = fixed_cost,
-           var_cost   = var_cost,
-           tp_val     = tp_val,
+           var_cost   = {{ var_cost }},
+           tp_val     = {{ tp_val }},
            prob_col   = {{ prob_col }},
            truth_col  = {{ truth_col }},
            positive   = positive)$profit

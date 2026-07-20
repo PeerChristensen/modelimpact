@@ -4,8 +4,12 @@
 #'
 #' @param x A data frame containing predicted probabilities of a target event and the actual outcome/class.
 #' @param fixed_cost Fixed cost (e.g. of a campaign)
-#' @param var_cost Variable cost (e.g. discount offered)
-#' @param tp_val The average value of a True Positive
+#' @param var_cost Variable cost (e.g. discount offered). Either a single value
+#'   applied to every case, or an unquoted column name (or vector) giving a
+#'   per-observation cost.
+#' @param tp_val The value of a True Positive. Either a single value applied to
+#'   every case, or an unquoted column name (or vector) giving a
+#'   per-observation value.
 #' @param prob_accept Probability of the offer being accepted. Variable cost is only incurred when accepted. Defaults to 1.
 #' @param prob_col The unquoted name of the column with probabilities of the event of interest.
 #' @param truth_col The unquoted name of the column with the actual outcome/class.
@@ -40,9 +44,9 @@ cost_revenue <- function(x,
     dplyr::arrange(dplyr::desc({{ prob_col }})) %>%
     dplyr::mutate(row = dplyr::row_number()) %>%
     dplyr::mutate(pct = dplyr::ntile(row,100)) %>%
-    dplyr::mutate(cost = var_cost * prob_accept) %>%
+    dplyr::mutate(cost = ({{ var_cost }}) * prob_accept) %>%
     dplyr::mutate(cost_sum = cumsum(cost) + fixed_cost) %>%
-    dplyr::mutate(rev = dplyr::if_else({{ truth_col }} == positive,tp_val,0)) %>%
+    dplyr::mutate(rev = dplyr::if_else({{ truth_col }} == positive, ({{ tp_val }}) + 0, 0)) %>%
     dplyr::mutate(cum_rev = cumsum(rev)) %>%
     dplyr::select(row,pct,cost_sum,cum_rev) %>%
     structure(class = c("mi_cost_revenue", "tbl_df", "tbl", "data.frame"))

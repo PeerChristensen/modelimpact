@@ -14,9 +14,14 @@ downloads](https://cranlogs.r-pkg.org/badges/grand-total/modelimpact)](https://C
 stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 <!-- badges: end -->
 
-This package is intended to help data scientists and decision-makers
-understand the potential value of churn prediction models depending on
-how many customers are being targeted by a campaign.
+This package helps data scientists and decision-makers understand the
+potential business value of a classification model depending on how many
+cases are targeted or actioned. Although the examples below use customer
+churn, the same tools apply to many other binary classification problems
+— such as fraud detection, credit default, lead scoring and marketing
+response, upsell and cross-sell, and predictive maintenance. See
+`vignette("beyond-churn", package = "modelimpact")` for a worked
+fraud-detection example.
 
 ## Installation
 

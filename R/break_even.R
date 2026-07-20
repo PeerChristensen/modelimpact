@@ -8,7 +8,10 @@
 #' @param x A data frame containing predicted probabilities of a target event and the actual outcome/class.
 #' @param fixed_cost Fixed cost (e.g. of a campaign).
 #' @param var_cost Variable cost (e.g. discount offered) per targeted customer.
-#' @param tp_val The average value of a True Positive.
+#'   Either a single value or an unquoted column name (or vector) giving a
+#'   per-observation cost.
+#' @param tp_val The value of a True Positive. Either a single value or an
+#'   unquoted column name (or vector) giving a per-observation value.
 #' @param prob_accept Probability of the offer being accepted. Variable cost is only incurred when accepted. Defaults to 1.
 #' @param prob_col The unquoted name of the column with probabilities of the event of interest.
 #' @param truth_col The unquoted name of the column with the actual outcome/class.
@@ -43,8 +46,8 @@ break_even <- function(x,
 
   p <- profit(x,
               fixed_cost = fixed_cost,
-              var_cost   = var_cost,
-              tp_val     = tp_val,
+              var_cost   = {{ var_cost }},
+              tp_val     = {{ tp_val }},
               prob_accept = prob_accept,
               prob_col   = {{ prob_col }},
               truth_col  = {{ truth_col }},

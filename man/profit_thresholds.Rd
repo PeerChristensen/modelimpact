@@ -20,17 +20,23 @@ profit_thresholds(
 \arguments{
 \item{x}{A data frame containing predicted probabilities of a target event and the actual outcome/class.}
 
-\item{var_cost}{Variable cost (e.g. of a campaign offer)}
+\item{var_cost}{Variable cost (e.g. of a campaign offer). Either a single
+value applied to every case, or an unquoted column name (or vector) giving
+a per-observation cost.}
 
 \item{prob_accept}{Probability of offer being accepted. Defaults to 1.}
 
-\item{tp_val}{The average value of a True Positive. `var_cost` is automatically subtracted.}
+\item{tp_val}{The value of a True Positive. `var_cost` is automatically
+subtracted. Either a single value or an unquoted column name (or vector).}
 
-\item{fp_val}{The average cost of a False Positive. `var_cost` is automatically subtracted.}
+\item{fp_val}{The cost of a False Positive. `var_cost` is automatically
+subtracted. Either a single value or an unquoted column name (or vector).}
 
-\item{tn_val}{The average value of a True Negative.}
+\item{tn_val}{The value of a True Negative. Either a single value or an
+unquoted column name (or vector).}
 
-\item{fn_val}{The average cost of a False Negative.}
+\item{fn_val}{The cost of a False Negative. Either a single value or an
+unquoted column name (or vector).}
 
 \item{prob_col}{The unquoted name of the column with probabilities of the event of interest.}
 

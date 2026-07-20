@@ -21,9 +21,13 @@ marginal_profit(
 
 \item{fixed_cost}{Fixed cost (e.g. of a campaign). Charged once, to the first bin.}
 
-\item{var_cost}{Variable cost (e.g. discount offered) per targeted customer.}
+\item{var_cost}{Variable cost (e.g. discount offered) per targeted customer.
+Either a single value applied to every case, or an unquoted column name (or
+vector) giving a per-observation cost.}
 
-\item{tp_val}{The average value of a True Positive.}
+\item{tp_val}{The value of a True Positive. Either a single value applied to
+every case, or an unquoted column name (or vector) giving a
+per-observation value.}
 
 \item{prob_accept}{Probability of the offer being accepted. Variable cost is only incurred when accepted. Defaults to 1.}
 
