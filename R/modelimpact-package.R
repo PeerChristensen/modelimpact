@@ -21,5 +21,5 @@ globalVariables(c(
   "bin", "n", "events", "revenue", "marginal_profit", "cum_profit",
   "threshold", "payoff", "tp", "fp", "tn", "fn", "tpr", "fpr", "precision",
   "recall", "model", "value", "swing", "high_profit", "low_profit",
-  ".row_cost", ".row_rev", ".val", "cum_value"
+  ".row_cost", ".row_rev", ".val", "cum_value", ".c", "uplift", "baseline"
 ))

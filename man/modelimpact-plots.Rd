@@ -14,6 +14,7 @@
 \alias{autoplot.mi_bootstrap}
 \alias{autoplot.mi_budget}
 \alias{autoplot.mi_value_gains}
+\alias{autoplot.mi_qini}
 \alias{plot_profit}
 \alias{plot_cost_revenue}
 \alias{plot_roi}
@@ -24,6 +25,7 @@
 \alias{plot_roc}
 \alias{plot_budget}
 \alias{plot_value_gains}
+\alias{plot_qini}
 \title{Plot modelimpact results}
 \usage{
 autoplot.mi_profit(object, ...)
@@ -50,6 +52,8 @@ autoplot.mi_budget(object, ...)
 
 autoplot.mi_value_gains(object, ...)
 
+autoplot.mi_qini(object, ...)
+
 plot_profit(data)
 
 plot_cost_revenue(data)
@@ -69,6 +73,8 @@ plot_roc(data, slope = NULL)
 plot_budget(data)
 
 plot_value_gains(data)
+
+plot_qini(data)
 }
 \arguments{
 \item{object, data}{The data frame returned by the matching modelimpact

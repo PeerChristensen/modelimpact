@@ -23,6 +23,10 @@
   rank cases by predicted value and report the share of realised value captured
   and the profit of targeting the top share. `value_gains()` has its own
   `autoplot()` method and `plot_value_gains()` wrapper.
+* New support for **uplift models** evaluated against treated / control data:
+  `qini_curve()` reports the cumulative incremental positives with a Qini
+  coefficient and AUUC, and `uplift_profit()` turns the ranking into
+  incremental profit. Both have `autoplot()` methods (`plot_qini()`).
 
 ## Documentation
 

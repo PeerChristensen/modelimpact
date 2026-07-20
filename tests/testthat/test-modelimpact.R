@@ -267,6 +267,49 @@ test_that("regression functions accept confidence bands", {
   expect_true(all(c(".lower", ".upper") %in% names(vg)))
 })
 
+test_that("qini_curve meets the random line and rewards an informative model", {
+  set.seed(20)
+  n <- 3000
+  treat <- rbinom(n, 1, 0.5)
+  u <- runif(n)
+  y <- rbinom(n, 1, pmin(0.2 + treat * 0.5 * u, 1))
+  d <- data.frame(score = u, treat = treat, y = ifelse(y == 1, "Yes", "No"))
+
+  q <- qini_curve(d, uplift_col = score, treatment_col = treat, outcome_col = y,
+                  positive = "Yes", treated = 1)
+  expect_s3_class(q, "mi_qini")
+  expect_named(q, c("row", "prop_pop", "uplift", "baseline"))
+  # curve and random line coincide at the far right
+  expect_equal(tail(q$uplift, 1), tail(q$baseline, 1))
+  # an informative uplift model beats random targeting
+  expect_gt(attr(q, "qini"), 0)
+
+  # reversing the score should not do better than the informative ranking
+  d$rev <- -d$score
+  q_rev <- qini_curve(d, uplift_col = rev, treatment_col = treat, outcome_col = y,
+                      positive = "Yes", treated = 1)
+  expect_lt(attr(q_rev, "qini"), attr(q, "qini"))
+})
+
+test_that("uplift_profit equals valued incremental positives minus cost", {
+  set.seed(21)
+  n <- 1000
+  treat <- rbinom(n, 1, 0.5)
+  u <- runif(n)
+  y <- rbinom(n, 1, pmin(0.2 + treat * 0.5 * u, 1))
+  d <- data.frame(score = u, treat = treat, y = ifelse(y == 1, "Yes", "No"))
+
+  up <- uplift_profit(d, var_cost = 1, tp_val = 100,
+                      uplift_col = score, treatment_col = treat, outcome_col = y,
+                      positive = "Yes", treated = 1)
+  q <- qini_curve(d, uplift_col = score, treatment_col = treat, outcome_col = y,
+                  positive = "Yes", treated = 1)
+  expect_s3_class(up, "mi_profit")
+  expected <- q$uplift * 100 - seq_len(n)
+  expect_equal(up$profit, expected)
+})
+
+
 
 
 

@@ -220,6 +220,22 @@ autoplot.mi_value_gains <- function(object, ...) {
   p
 }
 
+#' @rdname modelimpact-plots
+autoplot.mi_qini <- function(object, ...) {
+  .check_ggplot()
+  p <- ggplot2::ggplot(object, ggplot2::aes(x = .data$prop_pop, y = .data$uplift)) +
+    ggplot2::geom_line(ggplot2::aes(y = .data$baseline), linetype = "dashed")
+  p <- .add_ci_ribbon(p, object)
+  p <- p +
+    ggplot2::geom_line(colour = "darkred", linewidth = 1) +
+    ggplot2::labs(x = "Proportion targeted", y = "Cumulative incremental positives")
+  qc <- attr(object, "qini")
+  if (!is.null(qc) && !is.na(qc)) {
+    p <- p + ggplot2::labs(subtitle = paste0("Qini coefficient = ", round(qc, 3)))
+  }
+  p
+}
+
 # ---- back-compatible plot_*() wrappers --------------------------------------
 
 #' @rdname modelimpact-plots
@@ -279,5 +295,11 @@ plot_budget <- function(data) {
 #' @rdname modelimpact-plots
 #' @export
 plot_value_gains <- function(data) {
+  .check_ggplot(); ggplot2::autoplot(data)
+}
+
+#' @rdname modelimpact-plots
+#' @export
+plot_qini <- function(data) {
   .check_ggplot(); ggplot2::autoplot(data)
 }
