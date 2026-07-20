@@ -146,3 +146,40 @@ test_that("per-observation values change results when they vary", {
   expect_false(isTRUE(all.equal(p_flat$profit, p_var$profit)))
 })
 
+test_that("budget_frontier is monotonic and reaches the unconstrained optimum", {
+  bf <- budget_frontier(predictions, 1000, 100, 2000, prob_col = Yes, truth_col = Churn)
+  expect_s3_class(bf, "mi_budget")
+  expect_named(bf, c("budget", "n_targeted", "prop_pop", "cost", "profit", "roi", "capture"))
+  # more budget can never reduce the best achievable profit
+  expect_true(all(diff(bf$profit) >= -1e-6))
+  # with enough budget we recover the unconstrained optimum
+  p <- profit(predictions, 1000, 100, 2000, prob_col = Yes, truth_col = Churn)
+  expect_equal(max(bf$profit), max(p$profit))
+  # a zero budget means doing nothing
+  expect_equal(bf$profit[1], 0)
+})
+
+test_that("budget_profit stays within budget and never loses money", {
+  b  <- 50000
+  bp <- budget_profit(predictions, budget = b, 1000, 100, 2000,
+                      prob_col = Yes, truth_col = Churn)
+  expect_equal(nrow(bp), 1L)
+  expect_gte(bp$profit, 0)
+  expect_lte(bp$cost, b)
+  p <- profit(predictions, 1000, 100, 2000, prob_col = Yes, truth_col = Churn)
+  expect_lte(bp$profit, max(p$profit))
+})
+
+test_that("budget functions honour per-observation costs and values", {
+  d <- predictions
+  d$vc <- 100
+  d$tv <- 2000
+  bp1 <- budget_profit(predictions, 50000, 1000, 100, 2000,
+                       prob_col = Yes, truth_col = Churn)
+  bp2 <- budget_profit(d, 50000, 1000, var_cost = vc, tp_val = tv,
+                       prob_col = Yes, truth_col = Churn)
+  expect_equal(bp1$profit, bp2$profit)
+  expect_equal(bp1$n_targeted, bp2$n_targeted)
+})
+
+

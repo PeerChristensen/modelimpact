@@ -10,6 +10,10 @@
   `profit_thresholds()`, may be given as an unquoted column name (or a vector)
   so that each case can carry its own value or cost. A single scalar continues
   to work exactly as before.
+* New **budget-constrained targeting** helpers: `budget_profit()` reports the
+  best profit achievable for a given budget, and `budget_frontier()` sweeps a
+  range of budgets to show how achievable profit grows with spend (with an
+  `autoplot()` method and `plot_budget()` wrapper).
 
 ## Documentation
 

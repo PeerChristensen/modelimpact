@@ -170,6 +170,17 @@ autoplot.mi_bootstrap <- function(object, ...) {
     ggplot2::labs(x = "Proportion targeted", y = "Profit")
 }
 
+#' @rdname modelimpact-plots
+autoplot.mi_budget <- function(object, ...) {
+  .check_ggplot()
+  ggplot2::ggplot(object, ggplot2::aes(x = .data$budget, y = .data$profit)) +
+    ggplot2::geom_hline(yintercept = max(object$profit), linetype = "dashed") +
+    ggplot2::geom_line(colour = "darkred", linewidth = 1) +
+    ggplot2::scale_x_continuous(labels = .money_labels) +
+    ggplot2::scale_y_continuous(labels = .money_labels) +
+    ggplot2::labs(x = "Budget", y = "Best achievable profit")
+}
+
 # ---- back-compatible plot_*() wrappers --------------------------------------
 
 #' @rdname modelimpact-plots
@@ -218,4 +229,10 @@ plot_thresholds <- function(data) {
 #' @export
 plot_roc <- function(data, slope = NULL) {
   .check_ggplot(); ggplot2::autoplot(data, slope = slope)
+}
+
+#' @rdname modelimpact-plots
+#' @export
+plot_budget <- function(data) {
+  .check_ggplot(); ggplot2::autoplot(data)
 }
