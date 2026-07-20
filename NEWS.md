@@ -18,6 +18,11 @@
   `roi()`, `cost_revenue()`, `cumulative_gains()` and `lift_curve()` gained
   `ci`, `n_boot` and `conf_level` arguments; with `ci = TRUE` the result gains
   `.lower`/`.upper` columns and `autoplot()` draws a ribbon.
+* New support for **regression models** that predict a continuous value:
+  `value_gains()` (with a concentration / Gini coefficient) and `value_profit()`
+  rank cases by predicted value and report the share of realised value captured
+  and the profit of targeting the top share. `value_gains()` has its own
+  `autoplot()` method and `plot_value_gains()` wrapper.
 
 ## Documentation
 

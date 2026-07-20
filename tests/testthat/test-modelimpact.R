@@ -224,5 +224,49 @@ test_that("autoplot draws bands when confidence columns are present", {
   expect_s3_class(plot_profit(p), "ggplot")
 })
 
+test_that("value_gains captures all value and reports a valid concentration", {
+  set.seed(10)
+  n <- 400
+  val <- rgamma(n, shape = 2, scale = 50)
+  d <- data.frame(
+    pred         = val + stats::rnorm(n, 0, 40),
+    pred_perfect = val,
+    value        = val
+  )
+
+  vg <- value_gains(d, pred_col = pred, value_col = value)
+  expect_s3_class(vg, "mi_value_gains")
+  expect_named(vg, c("row", "prop_pop", "cum_value", "gain", "baseline"))
+  expect_true(all(diff(vg$gain) >= -1e-9))          # non-decreasing
+  expect_equal(tail(vg$gain, 1), 1)                 # all value captured
+  expect_lte(attr(vg, "gini"), 1 + 1e-9)
+
+  # a perfect ranking matches the oracle: concentration == 1
+  vg_perfect <- value_gains(d, pred_col = pred_perfect, value_col = value)
+  expect_equal(attr(vg_perfect, "gini"), 1)
+})
+
+test_that("value_profit equals cumulative realised value minus cost", {
+  set.seed(11)
+  n <- 200
+  d <- data.frame(pred = stats::runif(n), value = stats::runif(n, 0, 100))
+
+  vp <- value_profit(d, fixed_cost = 0, var_cost = 10, pred_col = pred, value_col = value)
+  expect_s3_class(vp, "mi_profit")
+
+  ord      <- order(d$pred, decreasing = TRUE)
+  expected <- cumsum(d$value[ord]) - seq_len(n) * 10
+  expect_equal(vp$profit, expected)
+})
+
+test_that("regression functions accept confidence bands", {
+  set.seed(12)
+  n <- 150
+  d <- data.frame(pred = stats::runif(n), value = stats::runif(n, 0, 100))
+  vg <- value_gains(d, pred_col = pred, value_col = value, ci = TRUE, n_boot = 30)
+  expect_true(all(c(".lower", ".upper") %in% names(vg)))
+})
+
+
 
 

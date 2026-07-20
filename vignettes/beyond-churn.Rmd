@@ -166,3 +166,68 @@ To reuse any of these functions for a different problem, you only need to:
    incurs its cost if accepted.
 
 The interpretation of every plot and summary then carries over unchanged.
+
+## Regression models: targeting by predicted value
+
+Not every model predicts a class. Sometimes the model predicts a *continuous
+value* — expected customer lifetime value (CLV), next-year spend, claim size,
+or expected loss — and we want to target the cases with the highest predicted
+value. `value_gains()` and `value_profit()` are the regression counterparts of
+`cumulative_gains()` and `profit()`: instead of a positive class they take the
+model's prediction (`pred_col`) and the realised value (`value_col`).
+
+Here we simulate customers whose predicted CLV is correlated with, but not
+identical to, their realised CLV.
+
+```{r reg-data}
+set.seed(99)
+n <- 2000
+
+realised_clv  <- rgamma(n, shape = 2, scale = 300)          # actual value
+predicted_clv <- realised_clv * runif(n, 0.4, 1.6)          # noisy model score
+
+customers <- data.frame(
+  predicted_clv = predicted_clv,
+  realised_clv  = realised_clv
+)
+
+head(customers)
+```
+
+### How much value do we capture?
+
+`value_gains()` ranks customers by predicted CLV and shows what share of the
+*total realised value* is captured as we target more of them. The dashed
+diagonal is random targeting; the further the curve bows above it, the better
+the model concentrates value near the top. The **concentration (Gini)**
+coefficient in the subtitle summarises this in one number (1 = as good as a
+perfect ranking, 0 = no better than random).
+
+```{r reg-gains, eval = has_ggplot2}
+vg <- value_gains(customers, pred_col = predicted_clv, value_col = realised_clv)
+autoplot(vg)
+
+# the coefficient is also available programmatically
+attr(vg, "gini")
+```
+
+### What is the profit of targeting by predicted value?
+
+`value_profit()` accumulates the realised value of the customers we contact and
+subtracts the cost of contacting them. Suppose each contact costs 50.
+
+```{r reg-profit, eval = has_ggplot2}
+customers %>%
+  value_profit(
+    var_cost  = 50,
+    pred_col  = predicted_clv,
+    value_col = realised_clv
+  ) %>%
+  autoplot()
+```
+
+Because `value_profit()` returns the same kind of object as `profit()`, the
+plot reads exactly the same way: profit rises while the customers we add bring
+in more value than they cost, peaks at the profit-maximising share (dashed
+line), then falls once we start contacting low-value customers.
+

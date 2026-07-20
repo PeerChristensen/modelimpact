@@ -204,6 +204,22 @@ autoplot.mi_budget <- function(object, ...) {
     ggplot2::labs(x = "Budget", y = "Best achievable profit")
 }
 
+#' @rdname modelimpact-plots
+autoplot.mi_value_gains <- function(object, ...) {
+  .check_ggplot()
+  p <- ggplot2::ggplot(object, ggplot2::aes(x = .data$prop_pop, y = .data$gain)) +
+    ggplot2::geom_abline(slope = 1, intercept = 0, linetype = "dashed")
+  p <- .add_ci_ribbon(p, object)
+  p <- p +
+    ggplot2::geom_line(colour = "darkred", linewidth = 1) +
+    ggplot2::labs(x = "Proportion targeted", y = "Proportion of value captured")
+  g <- attr(object, "gini")
+  if (!is.null(g) && !is.na(g)) {
+    p <- p + ggplot2::labs(subtitle = paste0("Concentration (Gini) = ", round(g, 3)))
+  }
+  p
+}
+
 # ---- back-compatible plot_*() wrappers --------------------------------------
 
 #' @rdname modelimpact-plots
@@ -257,5 +273,11 @@ plot_roc <- function(data, slope = NULL) {
 #' @rdname modelimpact-plots
 #' @export
 plot_budget <- function(data) {
+  .check_ggplot(); ggplot2::autoplot(data)
+}
+
+#' @rdname modelimpact-plots
+#' @export
+plot_value_gains <- function(data) {
   .check_ggplot(); ggplot2::autoplot(data)
 }
