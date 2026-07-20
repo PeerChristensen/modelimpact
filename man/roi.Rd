@@ -12,7 +12,10 @@ roi(
   prob_accept = 1,
   prob_col = NA,
   truth_col = NA,
-  positive = "Yes"
+  positive = "Yes",
+  ci = FALSE,
+  n_boot = 1000,
+  conf_level = 0.95
 )
 }
 \arguments{
@@ -35,6 +38,14 @@ per-observation value.}
 \item{truth_col}{The unquoted name of the column with the actual outcome/class.}
 
 \item{positive}{The value in `truth_col` that identifies the event of interest. Defaults to 'Yes'.}
+
+\item{ci}{Add bootstrap confidence bands? When `TRUE`, the returned data
+frame gains `.lower` and `.upper` columns and `autoplot()` draws a ribbon.
+Defaults to `FALSE`.}
+
+\item{n_boot}{Number of bootstrap resamples used when `ci = TRUE`. Defaults to 1000.}
+
+\item{conf_level}{Width of the confidence band when `ci = TRUE`. Defaults to 0.95.}
 }
 \value{
 A data frame with the following columns:

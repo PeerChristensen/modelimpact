@@ -32,6 +32,19 @@ NULL
 # internal: format monetary axis labels as plain numbers (no scientific notation)
 .money_labels <- function(x) format(x, scientific = FALSE, big.mark = ",", trim = TRUE)
 
+# internal: add a bootstrap confidence ribbon when the object carries .lower /
+# .upper columns (produced by the curve functions with `ci = TRUE`). The ribbon
+# inherits the x aesthetic from the base plot and is added before the line so it
+# sits behind it.
+.add_ci_ribbon <- function(p, object) {
+  if (all(c(".lower", ".upper") %in% names(object))) {
+    p <- p + ggplot2::geom_ribbon(
+      ggplot2::aes(ymin = .data[[".lower"]], ymax = .data[[".upper"]]),
+      fill = "darkred", alpha = 0.2)
+  }
+  p
+}
+
 # ---- autoplot methods -------------------------------------------------------
 
 #' @rdname modelimpact-plots
@@ -39,9 +52,11 @@ autoplot.mi_profit <- function(object, ...) {
   .check_ggplot()
   object$pct_pop <- object$row / max(object$row) * 100
   mp <- object[which.max(object$profit), ]
-  ggplot2::ggplot(object, ggplot2::aes(x = .data$pct_pop, y = .data$profit)) +
+  p <- ggplot2::ggplot(object, ggplot2::aes(x = .data$pct_pop, y = .data$profit)) +
     ggplot2::geom_hline(yintercept = 0, linetype = "dashed") +
-    ggplot2::geom_vline(xintercept = mp$pct_pop, linetype = "dashed") +
+    ggplot2::geom_vline(xintercept = mp$pct_pop, linetype = "dashed")
+  p <- .add_ci_ribbon(p, object)
+  p +
     ggplot2::geom_line(colour = "darkred", linewidth = 1) +
     ggplot2::scale_y_continuous(labels = .money_labels) +
     ggplot2::labs(x = "% targeted", y = "Profit")
@@ -51,7 +66,9 @@ autoplot.mi_profit <- function(object, ...) {
 autoplot.mi_cost_revenue <- function(object, ...) {
   .check_ggplot()
   object$pct_pop <- object$row / max(object$row) * 100
-  ggplot2::ggplot(object, ggplot2::aes(x = .data$pct_pop)) +
+  p <- ggplot2::ggplot(object, ggplot2::aes(x = .data$pct_pop))
+  p <- .add_ci_ribbon(p, object)
+  p +
     ggplot2::geom_line(ggplot2::aes(y = .data$cost_sum), linetype = "dashed") +
     ggplot2::geom_line(ggplot2::aes(y = .data$cum_rev), colour = "darkred", linewidth = 1) +
     ggplot2::scale_y_continuous(labels = .money_labels) +
@@ -62,8 +79,10 @@ autoplot.mi_cost_revenue <- function(object, ...) {
 autoplot.mi_roi <- function(object, ...) {
   .check_ggplot()
   object$pct_pop <- object$row / max(object$row) * 100
-  ggplot2::ggplot(object, ggplot2::aes(x = .data$pct_pop, y = .data$roi)) +
-    ggplot2::geom_hline(yintercept = 0, linetype = "dashed") +
+  p <- ggplot2::ggplot(object, ggplot2::aes(x = .data$pct_pop, y = .data$roi)) +
+    ggplot2::geom_hline(yintercept = 0, linetype = "dashed")
+  p <- .add_ci_ribbon(p, object)
+  p +
     ggplot2::geom_line(colour = "darkred", linewidth = 1) +
     ggplot2::labs(x = "% targeted", y = "ROI")
 }
@@ -71,8 +90,10 @@ autoplot.mi_roi <- function(object, ...) {
 #' @rdname modelimpact-plots
 autoplot.mi_gains <- function(object, ...) {
   .check_ggplot()
-  ggplot2::ggplot(object, ggplot2::aes(x = .data$prop_pop, y = .data$gain)) +
-    ggplot2::geom_abline(slope = 1, intercept = 0, linetype = "dashed") +
+  p <- ggplot2::ggplot(object, ggplot2::aes(x = .data$prop_pop, y = .data$gain)) +
+    ggplot2::geom_abline(slope = 1, intercept = 0, linetype = "dashed")
+  p <- .add_ci_ribbon(p, object)
+  p +
     ggplot2::geom_line(colour = "darkred", linewidth = 1) +
     ggplot2::labs(x = "Proportion targeted", y = "Proportion of positives captured")
 }
@@ -80,8 +101,10 @@ autoplot.mi_gains <- function(object, ...) {
 #' @rdname modelimpact-plots
 autoplot.mi_lift <- function(object, ...) {
   .check_ggplot()
-  ggplot2::ggplot(object, ggplot2::aes(x = .data$prop_pop, y = .data$lift)) +
-    ggplot2::geom_hline(yintercept = 1, linetype = "dashed") +
+  p <- ggplot2::ggplot(object, ggplot2::aes(x = .data$prop_pop, y = .data$lift)) +
+    ggplot2::geom_hline(yintercept = 1, linetype = "dashed")
+  p <- .add_ci_ribbon(p, object)
+  p +
     ggplot2::geom_line(colour = "darkred", linewidth = 1) +
     ggplot2::labs(x = "Proportion targeted", y = "Lift")
 }

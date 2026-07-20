@@ -49,18 +49,15 @@ bootstrap_profit <- function(x,
 
   n <- nrow(x)
 
-  mat <- vapply(seq_len(n_boot), function(b) {
-    xb <- x[sample(n, replace = TRUE), , drop = FALSE]
-    profit(xb,
+  bands <- .bootstrap_curve(x, n_boot, probs, fun = function(d) {
+    profit(d,
            fixed_cost = fixed_cost,
            var_cost   = {{ var_cost }},
            tp_val     = {{ tp_val }},
            prob_col   = {{ prob_col }},
            truth_col  = {{ truth_col }},
            positive   = positive)$profit
-  }, numeric(n))
-
-  bands <- apply(mat, 1, stats::quantile, probs = probs, names = FALSE)
+  })
 
   dplyr::tibble(row      = seq_len(n),
                 prop_pop = seq_len(n) / n,

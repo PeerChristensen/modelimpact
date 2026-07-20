@@ -14,6 +14,11 @@
 #' @param prob_col The unquoted name of the column with probabilities of the event of interest.
 #' @param truth_col The unquoted name of the column with the actual outcome/class.
 #' @param positive The value in `truth_col` that identifies the event of interest. Defaults to 'Yes'.
+#' @param ci Add bootstrap confidence bands (for the revenue curve)? When
+#'   `TRUE`, the returned data frame gains `.lower` and `.upper` columns and
+#'   `autoplot()` draws a ribbon. Defaults to `FALSE`.
+#' @param n_boot Number of bootstrap resamples used when `ci = TRUE`. Defaults to 1000.
+#' @param conf_level Width of the confidence band when `ci = TRUE`. Defaults to 0.95.
 #' @return
 #' A data frame with the following columns:
 #'
@@ -38,9 +43,12 @@ cost_revenue <- function(x,
                          prob_accept = 1,
                          prob_col   = NA,
                          truth_col  = NA,
-                         positive   = "Yes" ) {
+                         positive   = "Yes",
+                         ci         = FALSE,
+                         n_boot     = 1000,
+                         conf_level = 0.95) {
 
-  x %>%
+  out <- x %>%
     dplyr::arrange(dplyr::desc({{ prob_col }})) %>%
     dplyr::mutate(row = dplyr::row_number()) %>%
     dplyr::mutate(pct = dplyr::ntile(row,100)) %>%
@@ -50,4 +58,16 @@ cost_revenue <- function(x,
     dplyr::mutate(cum_rev = cumsum(rev)) %>%
     dplyr::select(row,pct,cost_sum,cum_rev) %>%
     structure(class = c("mi_cost_revenue", "tbl_df", "tbl", "data.frame"))
+
+  if (isTRUE(ci)) {
+    band <- .ci_band(x, n_boot, conf_level, fun = function(d) {
+      cost_revenue(d, fixed_cost, {{ var_cost }}, {{ tp_val }}, prob_accept = prob_accept,
+                   prob_col = {{ prob_col }}, truth_col = {{ truth_col }},
+                   positive = positive)$cum_rev
+    })
+    out$.lower <- band$lower
+    out$.upper <- band$upper
+  }
+
+  out
 }

@@ -14,6 +14,10 @@
   best profit achievable for a given budget, and `budget_frontier()` sweeps a
   range of budgets to show how achievable profit grows with spend (with an
   `autoplot()` method and `plot_budget()` wrapper).
+* Optional **bootstrap confidence bands** on the ranking curves. `profit()`,
+  `roi()`, `cost_revenue()`, `cumulative_gains()` and `lift_curve()` gained
+  `ci`, `n_boot` and `conf_level` arguments; with `ci = TRUE` the result gains
+  `.lower`/`.upper` columns and `autoplot()` draws a ribbon.
 
 ## Documentation
 

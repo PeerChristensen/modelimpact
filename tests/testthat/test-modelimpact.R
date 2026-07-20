@@ -182,4 +182,47 @@ test_that("budget functions honour per-observation costs and values", {
   expect_equal(bp1$n_targeted, bp2$n_targeted)
 })
 
+test_that("ci = TRUE adds confidence bands to the curve functions", {
+  set.seed(123)
+  p <- profit(predictions, 1000, 100, 2000, prob_col = Yes, truth_col = Churn,
+              ci = TRUE, n_boot = 50)
+  expect_true(all(c(".lower", ".upper") %in% names(p)))
+  expect_equal(nrow(p), nrow(predictions))
+  expect_true(all(p$.lower <= p$.upper))
+
+  g <- cumulative_gains(predictions, prob_col = Yes, truth_col = Churn,
+                        ci = TRUE, n_boot = 50)
+  expect_true(all(c(".lower", ".upper") %in% names(g)))
+  expect_true(all(g$.lower <= g$.upper))
+
+  l <- lift_curve(predictions, prob_col = Yes, truth_col = Churn,
+                  ci = TRUE, n_boot = 50)
+  expect_true(all(c(".lower", ".upper") %in% names(l)))
+})
+
+test_that("ci = FALSE (default) leaves outputs unchanged", {
+  p0 <- profit(predictions, 1000, 100, 2000, prob_col = Yes, truth_col = Churn)
+  r0 <- roi(predictions, 1000, 100, 2000, prob_col = Yes, truth_col = Churn)
+  expect_false(any(c(".lower", ".upper") %in% names(p0)))
+  expect_false(any(c(".lower", ".upper") %in% names(r0)))
+})
+
+test_that("bootstrap_profit still returns lower/median/upper bands", {
+  set.seed(1)
+  b <- bootstrap_profit(predictions, 1000, 100, 2000, prob_col = Yes, truth_col = Churn,
+                        n_boot = 50)
+  expect_named(b, c("row", "prop_pop", "lower", "median", "upper"))
+  expect_true(all(b$lower <= b$upper))
+  expect_true(all(b$lower <= b$median & b$median <= b$upper))
+})
+
+test_that("autoplot draws bands when confidence columns are present", {
+  skip_if_not_installed("ggplot2")
+  set.seed(7)
+  p <- profit(predictions, 1000, 100, 2000, prob_col = Yes, truth_col = Churn,
+              ci = TRUE, n_boot = 20)
+  expect_s3_class(plot_profit(p), "ggplot")
+})
+
+
 
