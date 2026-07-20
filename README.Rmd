@@ -160,7 +160,7 @@ targeting more customers means an overall loss. Use `impact_summary()` or
 
 ## Return on investment
 
-> **Question it answers:** *How efficiently is each euro spent being converted
+> **Question it answers:** *How efficiently is each unit of spend being converted
 > into return, and how fast does that efficiency fade as we go down the list?*
 
 ```{r roi-plot}
@@ -351,5 +351,56 @@ All return classed data frames; those with an `autoplot()` method are noted.
 - `payoff_grid()` — payoff across a grid of thresholds and acceptance rates (ready for a heatmap).
 - `bootstrap_profit()` + `autoplot()` — confidence bands around the profit curve.
 - `tornado()` — sensitivity of maximum profit to each cost/value assumption.
+
+## New in version 1.2.0
+
+### Per-observation costs and values
+
+`tp_val` and `var_cost` (and the per-cell values in `profit_thresholds()`) now
+accept an unquoted **column name** as well as a single number, so each case can
+carry its own value or cost. A scalar still works exactly as before.
+
+```r
+profit(customers, var_cost = contact_cost, tp_val = clv,
+       prob_col = p_churn, truth_col = churned)
+```
+
+### Budget-constrained targeting
+
+`budget_profit()` reports the best profit achievable for a fixed budget, and
+`budget_frontier()` (+ `autoplot()`) shows how achievable profit grows as the
+budget increases.
+
+```r
+budget_profit(predictions, budget = 50000, fixed_cost = 1000,
+              var_cost = 100, tp_val = 2000, prob_col = Yes, truth_col = Churn)
+```
+
+### Confidence bands
+
+`profit()`, `roi()`, `cost_revenue()`, `cumulative_gains()` and `lift_curve()`
+gained a `ci = TRUE` argument that adds bootstrap `.lower`/`.upper` bands, drawn
+as a ribbon by `autoplot()`.
+
+```r
+autoplot(profit(predictions, 1000, 100, 2000,
+                prob_col = Yes, truth_col = Churn, ci = TRUE))
+```
+
+### Regression and uplift models
+
+For models that predict a continuous value, `value_gains()` (with a
+concentration / Gini coefficient) and `value_profit()` rank cases by predicted
+value. For uplift models evaluated against treated/control data, `qini_curve()`
+(Qini coefficient + AUUC) and `uplift_profit()` measure incremental impact. See
+`vignette("beyond-churn")` for a worked regression example.
+
+### tidymodels-friendly and reporting
+
+Every result supports `tidy()` (a plain tibble) and, where it makes sense,
+`glance()` (a one-row summary). `impact_report()` renders a ready-made,
+parameterised [Quarto](https://quarto.org) report bundling the summary and every
+curve into a single HTML document.
+
 
 
